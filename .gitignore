@@ -1,0 +1,15 @@
+# Build output
+dist/
+
+# Local test harnesses (built from src)
+tools/harness/
+tools/probe/
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.user
+*.suo
+
+# Logs
+*.log
