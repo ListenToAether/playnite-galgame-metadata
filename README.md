@@ -11,7 +11,7 @@
 | TouchGAL Metadata Provider | https://www.touchgal.ink/ | `TouchgalMetadata_af145bc3-1883-4933-a1d7-d5124de2cccd` | 同名文件夹 | `TouchgalMetadata.dll` |
 
 - 目标框架：.NET Framework 4.6.2（与 Playnite 10.51 一致），不依赖任何第三方 DLL，5 个插件各自独立、可单独启用/停用。
-- 已在 Playnite 10.51.0.23209 上实测：5 个插件同时加载无报错，四个免 Token 的站点刮削正常，TouchGAL 需自备 API 令牌。设置界面与「手动选择」窗口均为中文、暗色主题。
+- 当前版本 **v0.4**。已在 Playnite 10.51.0.23209 上实测：5 个插件同时加载无报错，四个免 Token 的站点刮削正常，TouchGAL 需自备 API 令牌。设置界面与「手动选择」窗口均为中文、暗色主题。
 
 ## 安装
 
@@ -26,6 +26,10 @@
 把 `dist\<插件名>_<Guid>\` 整个文件夹复制到 `%APPDATA%\Playnite\Extensions\`，重启 Playnite。
 
 > 覆盖安装前请先完全退出 Playnite，否则 DLL 被占用会复制失败。
+
+**方式三：一键脚本（从源码目录直接升级）**
+
+先退出正在玩的游戏，然后双击 `tools\install-and-restart.cmd`：它会关闭 Playnite、把 `dist\` 里最新的 5 个插件复制进扩展目录、再重新启动 Playnite。
 
 ## 在 Playnite 里怎么用
 
@@ -52,8 +56,9 @@
   - 各站背景图数量：Kungal 最多（`include=screenshots` 会带回整组 CG，例如《千恋＊万花》25 张）、Hikarinagi 与 Shionlib 为 5 张左右、TouchGAL 用 banner、Ymgal 没有截图（背景为空）。
   - 注意：Playnite 的「下载元数据」对话框里要 **勾选「背景图片」字段**，否则它根本不会向插件索取背景图，你选的这张也就不会写入。
 - **跳过这个来源**：本次刮削该来源不提供任何数据（不会报错、不会乱填）。
-- 如果你已经在游戏的「链接」里放了该站点的页面地址，插件会直接按 ID 精确获取，**不再弹窗**。
+- 如果你已经在游戏的「链接」里放了该站点的页面地址，插件会**按 ID 精确命中，并把该条目排在候选首位自动选中**，但窗口依旧会弹出，方便你核对后再确认（v0.4 起；旧版是命中链接就直接跳过弹窗）。
 - 后台批量下载（Playnite 的「后台下载元数据」）不会弹窗，走的仍是自动匹配。
+- **描述文字换行**：站点简介里的换行会被转成 HTML 的 `<br>` 再交给 Playnite（Playnite 的描述框按 HTML 渲染，纯换行符会被折叠成一整段）。因此描述在 Playnite 里是正常分段的；如果你在编辑框里看到 `<br>` 标签，那是字段的存储形式，显示时会变成换行。
 
 ## 插件设置（设置 → 扩展 → 选择插件 → 设置）
 
@@ -151,6 +156,22 @@ powershell -ExecutionPolicy Bypass -File .\tools\build-ui.ps1
 .\tools\ui\UiSmoke.exe
 ```
 
+## 发布到官方附加组件库
+
+官方库（[PlayniteAddonDatabase](https://github.com/JosefNemec/PlayniteAddonDatabase)）**目前暂停接收新插件**，官方说明是提交量激增、部分提交不符合规范，以及正在为 Playnite 11 准备新的提交/验证系统（预计 2026 年底前上线并回移到 Playnite 10）。在恢复之前，插件不会出现在内置「附加组件」浏览器里，也没有自动更新，但手动安装完全不受影响。
+
+相关材料已经准备好，等你决定提交时直接用：
+
+| 文件 | 说明 |
+| --- | --- |
+| `addons/metadata/galgame-metadata_*.yaml` | 提交给官方库的 5 个 addon 清单（`Type: MetadataProvider`） |
+| `manifests/*.yaml` | 5 个 installer manifest（含 `.pext` 下载地址与版本号） |
+| `releases/*.pext` | 5 个安装包 |
+
+**提交前必须先建一个 `v0.4` 的 Release**，把 5 个 `.pext` 作为附件上传——installer manifest 里写死的就是这个路径。
+
+完整流程、字段规范和 AddonId 对照表见 [docs/publish-official.md](docs/publish-official.md)。
+
 ## 目录结构
 
 ```
@@ -166,6 +187,9 @@ powershell -ExecutionPolicy Bypass -File .\tools\build-ui.ps1
   tools\build-probe.ps1         构建带 Playnite.SDK 的字段级测试
   tools\build-ui.ps1            构建 UI 冒烟测试（中文设置界面 + 选择窗口）
   dist\<Name>_<Guid>\           构建产物：extension.yaml + icon.png + DLL
+  addons\metadata\*.yaml        提交给官方附加组件库的清单
+  manifests\*.yaml              安装清单（官方库清单里的 InstallerManifestUrl 指向这里）
+  docs\                         接口笔记、截图、发布指南
 ```
 
 ## 故障排查
@@ -173,6 +197,22 @@ powershell -ExecutionPolicy Bypass -File .\tools\build-ui.ps1
 - 插件是否加载：`%APPDATA%\Playnite\playnite.log` 里搜 `ExtensionFactory:Loaded plugin`。
 - 抓取日志：`%APPDATA%\Playnite\extensions.log`，logger 名为 `GalgameMetadata`（失败时会有 `Ymgal/Kungal/... download failed for "..."`）。
 - 抓取结果不对：先在 `tools\harness\Harness.exe` 里用同一标题跑一遍确认站点侧数据，再检查游戏名是否与站点标题差异过大（可在游戏链接里加站点 URL 强制精确匹配）。
+
+## 更新记录
+
+### v0.4（2026-10-26）
+
+- **修复描述不分段**：站点简介里的换行现在会转成 HTML `<br>` 再交给 Playnite（Playnite 描述框按 HTML 渲染，之前纯 `\n` 会被折叠成一整段）。简介清洗统一走 `CleanBlock`，自动识别站点本来返回的就是 HTML 的情况，避免二次转义。
+- **每次刮削都会弹窗**：即使游戏「链接」里已有站点地址，也只把该条目精确预选到候选首位，窗口仍会弹出让你确认；旧版遇到链接就直接静默返回。
+- **修复选择窗口顶部白条**：无边框可缩放窗口上 Windows 会画一条 DWM 浅色边框，改用 `WindowChrome`（`CaptionHeight=0`、`GlassFrameThickness=0`）后由自绘的暗色标题栏完全接管。
+- 左侧候选列表的超长标题改为省略号截断，不再溢出到右侧。
+- 版本号统一为 `0.4`（`extension.yaml`、`manifests/*.yaml`、`docs/publish-official.md` 同步）。
+
+### v0.3（2026-10-26）
+
+- 手动选择窗口：左侧候选条目、右侧全部背景图点选（仿 VNDB Nexus）。
+- 暗色主题窗口与中文设置界面。
+- Kungal 返回整组截图/CG（`include=screenshots`），其余站点附带 banner 与截图。
 
 ## 贡献
 

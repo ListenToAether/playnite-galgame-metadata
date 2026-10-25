@@ -1,0 +1,8 @@
+AddonId: TouchgalMetadata_af145bc3-1883-4933-a1d7-d5124de2cccd
+Packages:
+  - Version: 0.4
+    RequiredApiVersion: 6.15.0
+    ReleaseDate: 2026-10-26
+    PackageUrl: https://github.com/zxc34731116797/playnite-galgame-metadata/releases/download/v0.4/TouchgalMetadata_af145bc3-1883-4933-a1d7-d5124de2cccd.pext
+    Changelog:
+      - 'v0.4：完善手动选择与描述渲染，详见 README 更新记录'

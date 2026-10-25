@@ -18,7 +18,7 @@ Copy-Item (Join-Path $root '.gitignore') $stage -Force
 
 $tools = Join-Path $stage 'tools'
 New-Item -ItemType Directory -Path $tools -Force | Out-Null
-foreach ($name in @('build.ps1', 'install.ps1', 'pack.ps1', 'build-harness.ps1', 'build-probe.ps1', 'build-ui.ps1', 'test-settings-view.ps1', 'Harness.cs', 'Probe.cs', 'UiSmoke.cs', 'make-repo.ps1')) {
+foreach ($name in @('build.ps1', 'install.ps1', 'install-and-restart.cmd', 'pack.ps1', 'build-harness.ps1', 'build-probe.ps1', 'build-ui.ps1', 'test-settings-view.ps1', 'Harness.cs', 'Probe.cs', 'UiSmoke.cs', 'make-repo.ps1', 'make-release.ps1')) {
     $source = Join-Path $root ('tools\' + $name)
     if (Test-Path $source) { Copy-Item $source $tools -Force }
 }
@@ -43,6 +43,12 @@ $releases = Join-Path $stage 'releases'
 New-Item -ItemType Directory -Path $releases -Force | Out-Null
 Get-ChildItem (Join-Path $root 'dist\pext') -Filter *.pext -ErrorAction SilentlyContinue |
     ForEach-Object { Copy-Item $_.FullName $releases -Force }
+
+# Official addon database manifests (addons/metadata) and installer manifests (manifests).
+foreach ($dirName in @('addons', 'manifests')) {
+    $src = Join-Path $root $dirName
+    if (Test-Path $src) { Copy-Item $src (Join-Path $stage $dirName) -Recurse -Force }
+}
 
 $target = Join-Path $root 'dist\repo\playnite-galgame-metadata.zip'
 New-Item -ItemType Directory -Path (Split-Path -Parent $target) -Force | Out-Null

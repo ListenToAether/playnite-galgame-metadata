@@ -86,6 +86,16 @@ namespace GalgameMetadata.UiSmoke
                     Console.WriteLine("  - " + texts[i]);
                 }
                 Console.WriteLine("UI smoke OK");
+
+                // Descriptions are plain text with newlines; Playnite renders HTML, so ToHtml must escape
+                // and turn every line break into <br>.
+                var html = Text.ToHtml("第一段\r\n第二段\n\n第三段 & <test>");
+                Console.WriteLine("ToHtml: " + html.Replace("\n", "\\n"));
+                if (html != "第一段<br>\n第二段<br>\n<br>\n第三段 &amp; &lt;test&gt;")
+                {
+                    throw new InvalidOperationException("ToHtml output is wrong: " + html);
+                }
+
                 TestPumping();
             }
             catch (Exception ex)
@@ -150,6 +160,19 @@ namespace GalgameMetadata.UiSmoke
                             report = "FAILED: " + ex.Message;
                         }
                         Console.WriteLine("real picker [" + source.Name + "]: " + report);
+                    }
+                    foreach (var source in new ISiteSource[] { new HikarinagiSource(), new KungalSource() })
+                    {
+                        var report = "no result";
+                        try
+                        {
+                            report = LinkPreselectTest(dispatcher, source);
+                        }
+                        catch (Exception ex)
+                        {
+                            report = "FAILED: " + ex.Message;
+                        }
+                        Console.WriteLine("link preselect [" + source.Name + "]: " + report);
                     }
                     dispatcher.BeginInvoke(new Action(delegate
                     {
@@ -224,6 +247,62 @@ namespace GalgameMetadata.UiSmoke
                 selection.Game.Links.Count,
                 selection.Game.Screenshots.Count,
                 thumbCount);
+        }
+
+        /// <summary>
+        /// A game that already has a link to the site must still show the window (the link only preselects
+        /// the candidate), so the user can correct a wrong match on every scrape.
+        /// </summary>
+        private static string LinkPreselectTest(Dispatcher dispatcher, ISiteSource source)
+        {
+            var options = new FetchOptions();
+            var cancel = CancellationToken.None;
+            var hits = source.SearchAsync("千恋＊万花", 5, options, cancel).GetAwaiter().GetResult();
+            if (hits == null || hits.Count == 0) return "no search hits (network problem?)";
+
+            var id = hits[0].Id;
+            var url = source.PageUrl(id);
+            var windowShown = false;
+            ManualPicker.OnWindowCreated = delegate(SelectionWindow w)
+            {
+                windowShown = true;
+                var confirm = typeof(SelectionWindow).GetMethod("Confirm", BindingFlags.NonPublic | BindingFlags.Instance);
+                var okField = typeof(SelectionWindow).GetField("_ok", BindingFlags.NonPublic | BindingFlags.Instance);
+                var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
+                var ticks = 0;
+                timer.Tick += delegate
+                {
+                    ticks++;
+                    var ok = (Button)okField.GetValue(w);
+                    if (ok.IsEnabled && ticks >= 6)
+                    {
+                        timer.Stop();
+                        Capture(w, "link-" + source.SiteKey);
+                        confirm.Invoke(w, null);
+                    }
+                    else if (ticks > 100)
+                    {
+                        timer.Stop();
+                        w.DialogResult = false;
+                    }
+                };
+                timer.Start();
+            };
+
+            ScrapedGame picked;
+            try
+            {
+                picked = InteractiveResolver.ResolveCore(dispatcher, source, "千恋＊万花", new[] { url }, options, cancel, null);
+            }
+            finally
+            {
+                ManualPicker.OnWindowCreated = null;
+            }
+
+            if (!windowShown) return "FAILED: window did not open even though a link existed";
+            if (picked == null) return "window opened but nothing was confirmed";
+            return string.Format("windowShown={0} | linkId={1} | matched={2} | siteUrl={3}",
+                windowShown, id, picked.Name, picked.SiteUrl);
         }
 
         private static void Capture(Window window, string tag)

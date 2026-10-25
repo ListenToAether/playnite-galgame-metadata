@@ -11,6 +11,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shell;
 using System.Windows.Threading;
 using Playnite.SDK;
 using GalgameMetadata.Shared;
@@ -69,42 +70,80 @@ namespace GalgameMetadata.Playnite
         public static ScrapedGame Resolve(IPlayniteAPI api, ISiteSource source, string gameName,
             IEnumerable<string> existingUrls, FetchOptions options, CancellationToken cancel, ILogger log)
         {
-            // A link to the site already exists: that id is authoritative, no window needed.
+            var dispatcher = api == null || api.MainView == null ? null : api.MainView.UIDispatcher;
+            return ResolveCore(dispatcher, source, gameName, existingUrls, options, cancel, log);
+        }
+
+        internal static ScrapedGame ResolveCore(Dispatcher dispatcher, ISiteSource source, string gameName,
+            IEnumerable<string> existingUrls, FetchOptions options, CancellationToken cancel, ILogger log)
+        {
+            var query = gameName == null ? string.Empty : gameName.Trim();
+
+            // An existing link to the site is authoritative, but it only preselects the candidate:
+            // the user confirms on every scrape so a wrong match can be corrected next time.
+            var hits = new List<SearchHit>();
+            string linkId = null;
             if (existingUrls != null)
             {
                 foreach (var url in existingUrls)
                 {
                     if (string.IsNullOrWhiteSpace(url)) continue;
                     string id;
-                    if (!source.TryParseId(url, out id)) continue;
-                    try
+                    if (source.TryParseId(url, out id))
                     {
-                        return source.GetAsync(new SearchHit { Id = id, Title = gameName, Url = source.PageUrl(id) }, options, cancel)
-                            .GetAwaiter().GetResult();
-                    }
-                    catch (ScrapeException)
-                    {
-                        // Stale link, fall through to the search window.
+                        linkId = id;
+                        break;
                     }
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(gameName))
-                throw new ScrapeException("这个游戏没有可以用来搜索的名称。");
+            if (!string.IsNullOrWhiteSpace(linkId))
+            {
+                hits.Add(new SearchHit
+                {
+                    Id = linkId,
+                    Title = query.Length == 0 ? source.PageUrl(linkId) : query,
+                    Url = source.PageUrl(linkId)
+                });
+            }
 
-            var query = gameName.Trim();
-            var hits = source.SearchAsync(query, 15, options, cancel).GetAwaiter().GetResult();
-            if (hits == null || hits.Count == 0)
+            if (query.Length > 0)
+            {
+                try
+                {
+                    var found = source.SearchAsync(query, 15, options, cancel).GetAwaiter().GetResult();
+                    if (found != null)
+                    {
+                        foreach (var hit in found)
+                        {
+                            if (string.IsNullOrWhiteSpace(hit.Id)) continue;
+                            if (hits.Exists(h => string.Equals(h.Id, hit.Id, StringComparison.Ordinal))) continue;
+                            hits.Add(hit);
+                        }
+                    }
+                }
+                catch (ScrapeException)
+                {
+                    // A failed search is only fatal when there is no existing link to fall back on.
+                    if (hits.Count == 0) throw;
+                }
+            }
+
+            if (hits.Count == 0)
                 throw new ScrapeException(string.Format("{0} 没有搜索到“{1}”的结果。", source.Name, query));
 
-            var best = Text.BestIndex(hits, h => new[] { h.Title, h.AltTitle }, query, 0.45);
-            var preselectId = best >= 0 ? hits[best].Id : (hits.Count == 1 ? hits[0].Id : null);
+            var preselectId = linkId;
+            if (string.IsNullOrWhiteSpace(preselectId))
+            {
+                var best = Text.BestIndex(hits, h => new[] { h.Title, h.AltTitle }, query, 0.45);
+                preselectId = best >= 0 ? hits[best].Id : (hits.Count == 1 ? hits[0].Id : null);
+            }
 
             var selection = (ManualSelection)null;
             var pickerFailed = false;
             try
             {
-                selection = ManualPicker.Pick(api, source, query, hits, options, cancel, preselectId, log);
+                selection = ManualPicker.Pick(dispatcher, source, query, hits, options, cancel, preselectId, log);
             }
             catch (Exception ex)
             {
@@ -147,20 +186,24 @@ namespace GalgameMetadata.Playnite
     /// <summary>Modal window: pick the right search result on the left, pick a background on the right.</summary>
     internal static class ManualPicker
     {
-        public static ManualSelection Pick(IPlayniteAPI api, ISiteSource source, string gameName,
+        /// <summary>Test hook: invoked on the UI thread right after the window was created.</summary>
+        internal static Action<SelectionWindow> OnWindowCreated { get; set; }
+
+        public static ManualSelection Pick(Dispatcher dispatcher, ISiteSource source, string gameName,
             List<SearchHit> hits, FetchOptions options, CancellationToken cancel, string preselectId, ILogger log)
         {
-            if (api == null || hits == null || hits.Count == 0) return null;
+            if (hits == null || hits.Count == 0) return null;
 
             ManualSelection selection = null;
             Action show = delegate
             {
                 var window = new SelectionWindow(source, gameName, hits, options, cancel, preselectId, log);
+                var created = OnWindowCreated;
+                if (created != null) created(window);
                 var ok = window.ShowDialog();
                 if (ok == true) selection = window.Selection;
             };
 
-            var dispatcher = api.MainView == null ? null : api.MainView.UIDispatcher;
             if (dispatcher == null || dispatcher.CheckAccess()) show();
             else dispatcher.Invoke(show);
             return selection;
@@ -246,6 +289,18 @@ namespace GalgameMetadata.Playnite
             Background = Theme.Window;
             ShowInTaskbar = false;
             UseLayoutRounding = true;
+
+            // Without WindowChrome Windows paints its own light DWM frame on the top edge of a borderless
+            // resizable window, which is the white strip above the title bar.
+            var chrome = new WindowChrome
+            {
+                CaptionHeight = 0,
+                ResizeBorderThickness = new Thickness(6),
+                GlassFrameThickness = new Thickness(0),
+                CornerRadius = new CornerRadius(0),
+                UseAeroCaptionButtons = false
+            };
+            WindowChrome.SetWindowChrome(this, chrome);
 
             Content = new Border
             {

@@ -463,6 +463,54 @@ namespace GalgameMetadata.Shared
             return result.Length == 0 ? null : result;
         }
 
+        /// <summary>
+        /// Cleans a description that can arrive as plain text, as BBCode/markdown or as HTML,
+        /// so every source hands Playnite the same plain text with normal line breaks.
+        /// </summary>
+        public static string CleanBlock(string value)
+        {
+            if (string.IsNullOrEmpty(value)) return null;
+            var looksLikeHtml = Regex.IsMatch(value,
+                @"<\s*/?\s*(?:br|p|div|span|li|ul|ol|a|b|i|u|em|strong|h[1-6])\b[^>]*>",
+                RegexOptions.IgnoreCase);
+            return looksLikeHtml ? StripHtml(value) : CleanDescription(StripMarkup(value));
+        }
+
+        /// <summary>
+        /// Turns a plain text description into the HTML Playnite renders inside the description box.
+        /// Playnite collapses raw newlines, so every line break has to be an explicit &lt;br&gt;.
+        /// </summary>
+        public static string ToHtml(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return null;
+            var value = text.Replace("\r\n", "\n").Replace('\r', '\n');
+            var sb = new StringBuilder(value.Length + 32);
+            foreach (var c in value)
+            {
+                switch (c)
+                {
+                    case '&':
+                        sb.Append("&amp;");
+                        break;
+                    case '<':
+                        sb.Append("&lt;");
+                        break;
+                    case '>':
+                        sb.Append("&gt;");
+                        break;
+                    case '\n':
+                        // Keep the newline after the tag: Playnite ignores it when rendering the HTML,
+                        // but it keeps the stored description readable in the plain text editor.
+                        sb.Append("<br>\n");
+                        break;
+                    default:
+                        sb.Append(c);
+                        break;
+                }
+            }
+            return sb.ToString();
+        }
+
         public static string JoinParagraphs(IEnumerable<string> parts)
         {
             if (parts == null) return null;

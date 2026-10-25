@@ -500,7 +500,8 @@ namespace GalgameMetadata.Playnite
         public override string GetDescription(GetMetadataFieldArgs args)
         {
             var game = Load(args.CancelToken);
-            return game == null ? null : game.Description;
+            // Playnite shows the description as HTML and ignores raw newlines, so emit <br> instead of "\n".
+            return game == null ? null : Text.ToHtml(game.Description);
         }
 
         public override int? GetCommunityScore(GetMetadataFieldArgs args)

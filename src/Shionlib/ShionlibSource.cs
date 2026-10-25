@@ -230,7 +230,7 @@ namespace GalgameMetadata.Shionlib
 
             foreach (var key in order)
             {
-                var text = Text.CleanDescription(Text.StripMarkup(J.Str(details, key)));
+                var text = Text.CleanBlock(J.Str(details, key));
                 if (!string.IsNullOrEmpty(text)) return text;
             }
             return null;

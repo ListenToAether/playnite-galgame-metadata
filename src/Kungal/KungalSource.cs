@@ -262,7 +262,7 @@ namespace GalgameMetadata.Kungal
                 foreach (var intro in intros)
                 {
                     if (!string.Equals(J.Str(intro, "lang"), language, StringComparison.OrdinalIgnoreCase)) continue;
-                    var text = Text.CleanDescription(Text.StripMarkup(J.Str(intro, "value")));
+                    var text = Text.CleanBlock(J.Str(intro, "value"));
                     if (!string.IsNullOrEmpty(text)) return text;
                 }
             }

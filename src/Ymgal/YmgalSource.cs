@@ -150,7 +150,7 @@ namespace GalgameMetadata.Ymgal
                 Name = options.PreferChineseTitle
                     ? Text.FirstNonEmpty(chinese, original)
                     : Text.FirstNonEmpty(original, chinese),
-                Description = Text.CleanDescription(J.Str(node, "introduction")),
+                Description = Text.CleanBlock(J.Str(node, "introduction")),
                 CoverUrl = J.Str(node, "mainImg"),
                 Nsfw = J.Bool(node, "restricted") ?? false
             };

@@ -1,0 +1,8 @@
+AddonId: HikarinagiMetadata_57db3d17-7ad1-4f98-83b3-bcffb08ef8d2
+Packages:
+  - Version: 0.4
+    RequiredApiVersion: 6.15.0
+    ReleaseDate: 2026-10-26
+    PackageUrl: https://github.com/zxc34731116797/playnite-galgame-metadata/releases/download/v0.4/HikarinagiMetadata_57db3d17-7ad1-4f98-83b3-bcffb08ef8d2.pext
+    Changelog:
+      - 'v0.4：完善手动选择与描述渲染，详见 README 更新记录'

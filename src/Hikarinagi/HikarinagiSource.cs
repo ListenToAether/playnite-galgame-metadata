@@ -253,7 +253,7 @@ namespace GalgameMetadata.Hikarinagi
 
             foreach (var key in order)
             {
-                var text = Text.CleanDescription(Text.StripMarkup(J.Str(detail, key)));
+                var text = Text.CleanBlock(J.Str(detail, key));
                 if (!string.IsNullOrEmpty(text)) return text;
             }
             return null;

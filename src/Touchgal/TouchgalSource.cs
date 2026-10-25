@@ -130,7 +130,7 @@ namespace GalgameMetadata.Touchgal
                 Name = Text.FirstNonEmpty(title, hit.Title),
                 OriginalName = J.FirstStr(data, "aliases.0"),
                 ChineseName = title,
-                Description = Text.CleanDescription(Text.StripMarkup(J.Str(data, "introduction"))),
+                Description = Text.CleanBlock(J.Str(data, "introduction")),
                 CoverUrl = Text.FirstNonEmpty(J.Str(data, "coverUrl"), J.Str(data, "bannerUrl")),
                 BannerUrl = J.Str(data, "bannerUrl")
             };
