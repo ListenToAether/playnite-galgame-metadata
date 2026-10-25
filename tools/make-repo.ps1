@@ -25,13 +25,18 @@ foreach ($name in @('build.ps1', 'install.ps1', 'pack.ps1', 'build-harness.ps1',
 
 $docs = Join-Path $stage 'docs'
 New-Item -ItemType Directory -Path $docs -Force | Out-Null
+# The repo docs folder is authoritative; it already holds the API notes and screenshots.
+$localDocs = Join-Path $root 'docs'
+if (Test-Path $localDocs) {
+    Get-ChildItem $localDocs -File | ForEach-Object { Copy-Item $_.FullName $docs -Force }
+}
 foreach ($name in @('shionlib.md', 'touchgal.md')) {
     $source = Join-Path $research $name
-    if (Test-Path $source) { Copy-Item $source $docs -Force }
+    if ((Test-Path $source) -and -not (Test-Path (Join-Path $docs $name))) { Copy-Item $source $docs -Force }
 }
 foreach ($shotName in @('picker-dark.png', 'picker-dark-hikarinagi.png', 'picker-dark-kungal.png')) {
     $fromTools = Join-Path $root ('tools\ui\' + $shotName)
-    if (Test-Path $fromTools) { Copy-Item $fromTools (Join-Path $docs $shotName) -Force }
+    if ((Test-Path $fromTools) -and -not (Test-Path (Join-Path $docs $shotName))) { Copy-Item $fromTools (Join-Path $docs $shotName) -Force }
 }
 
 $releases = Join-Path $stage 'releases'

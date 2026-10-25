@@ -178,6 +178,33 @@ powershell -ExecutionPolicy Bypass -File .\tools\build-ui.ps1
 
 欢迎 Issue / PR。数据源接口若发生变化，改动集中在对应站点的 `src\<站点>\<站点>Source.cs`，`tools\harness\Harness.exe` 可以在不启动 Playnite 的情况下直接验证。
 
+## 致谢
+
+本项目的全部元数据都来自下列站点通过**公开 API / 公开页面**提供的数据。**特别感谢这些平台开放公共 API、数据与资源**——没有它们，这个插件无从谈起。
+
+| 站点 | 说明 |
+| --- | --- |
+| [Ymgal 月幕 Galgame](https://www.ymgal.games/) | 中文 Galgame 资料库，开放 `/open/archive` 查询接口 |
+| [Kungal 鲲 Galgame](https://www.kungal.com/) | Galgame 社区与资料库 |
+| [Hikarinagi](https://www.hikarinagi.org/) | 你和同好的 ACGN 社区 |
+| [Shionlib 书音的图书馆](https://shionlib.com/) | Galgame 资料归档站 |
+| [TouchGAL](https://www.touchgal.com/) | 一站式 Galgame 文化社区，提供官方 developer API |
+
+Kungal 来源的结构化数据实际由 [NextMoe Catalog API](https://api.nextmoe.dev/) 提供，同样感谢其开放的公共接口；各站点数据中的交叉引用也一并致谢：
+
+- [VNDB](https://vndb.org/) — The Visual Novel Database
+- [Bangumi 番组计划](https://bangumi.tv/) — Bangumi
+- [ErogameScape](https://erogamescape.dyndns.org/) — エロゲー批評空間
+- [Steam](https://store.steampowered.com/) — 全球最大的数字游戏发行平台
+
+本项目的接口字段、抓取策略与实现思路参考了以下开源项目，向作者们致谢：
+
+- [ReinaManager](https://github.com/huoshen80/ReinaManager)
+- [LunaBox](https://github.com/Saramanda9988/LunaBox)
+- [NekoBox](https://github.com/doudou0611/NekoBox)
+
+如果上述站点或项目认为本项目的使用方式有不妥之处，欢迎通过 Issue 联系，我们会及时调整或移除相关代码。
+
 ## 免责声明
 
 - 本项目仅做公开信息的读取与格式化，不存储、不索引站点内容，也不绕过任何访问限制；抓取频率均做了限速（每站 0.25–0.85 秒一次）。
