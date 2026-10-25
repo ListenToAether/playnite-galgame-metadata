@@ -79,7 +79,7 @@
 
 - 默认用 **游戏名** 在该站搜索，先用相似度（中/日文按字符二元组、兼顾包含关系）挑选最佳结果作为预选项；如果分数不够高，会拿前 3 个候选的详情页核对全部标题（原名/中文名/别名），确认一致才使用，仍然对不上就报错，不会乱填。
 - 打开「手动确认匹配结果」后，上面这套自动匹配只用来决定窗口里预先选中哪一条，最终由你点「使用这个条目」确认。
-- **推荐**：先把该游戏的站点页面链接加到 Playnite 游戏的 **链接** 里，之后刮削会直接按 ID 精确获取，完全不会串号：
+- **推荐**：先把该游戏的站点页面链接加到 Playnite 游戏的 **链接** 里，之后刮削会按 ID 精确命中并把该条目预选在候选首位，不会串号（窗口仍会弹出让你确认）：
 
 | 站点 | 可粘贴的链接格式 |
 | --- | --- |
@@ -122,97 +122,16 @@ TouchGAL 的网页/网页 API 受 Cloudflare 挑战保护，普通 HTTP 请求�
 
 ## 已知限制
 
-- Hikarinagi 没有聚合评分，Shionlib 也不提供评分，所以这两个来源不填「社区评分」。
-- Ymgal 只有封面（`mainImg`），没有截图/banner，所以背景图为空。
-- 少数 R18 作品在 Shionlib 没有成人标记，不会被标为 18+。
-- 单个来源一个游戏约 1–3 秒（含图片下载）；首次搜索 Ymgal 要先取 OAuth token。
-- 无 XAML：设置界面和选择窗口都是用 C# 代码构建的（本机没有 MSBuild/XAML 编译链），外观与原生设置页略有差异，功能一致；选择窗口自带暗色主题，不跟随 Playnite 的亮/暗主题切换。
-- 手动确认开着时，一次刮削勾选几个来源就会依次弹几个窗口；嫌麻烦可以在设置里关掉，或先给游戏加上站点链接（有链接就直接按 ID 获取，不弹窗）。
-
-## 重新构建与安装
-
-```powershell
-# 构建 5 个插件到 dist\
-powershell -ExecutionPolicy Bypass -File .\tools\build.ps1
-
-# 安装（复制到 Playnite 扩展目录，覆盖旧版本）
-powershell -ExecutionPolicy Bypass -File .\tools\install.ps1
-
-# 打包成 .pext（Playnite 的附加组件安装包）
-powershell -ExecutionPolicy Bypass -File .\tools\pack.ps1
-```
-
-安装/覆盖后需要重启 Playnite 才会加载新版本（Playnite 只在启动时加载扩展）。
-
-只在本机测试数据源（不需要 Playnite）：
-
-```powershell
-.\tools\harness\Harness.exe 千恋＊万花          # 5 个来源的抓取结果
-.\tools\probe\Probe.exe 千恋＊万花              # 走 Playnite SDK 类型的字段级结果
-.\tools\probe\Probe.exe 完全错误的标题 https://www.ymgal.games/ga22374 Ymgal   # 按链接精确匹配
-
-# UI 冒烟测试（STA 线程里构造中文设置界面和手动选择窗口，不需要 Playnite）
-powershell -ExecutionPolicy Bypass -File .\tools\build-ui.ps1
-.\tools\ui\UiSmoke.exe
-```
-
-## 发布到官方附加组件库
-
-官方库（[PlayniteAddonDatabase](https://github.com/JosefNemec/PlayniteAddonDatabase)）**目前暂停接收新插件**，官方说明是提交量激增、部分提交不符合规范，以及正在为 Playnite 11 准备新的提交/验证系统（预计 2026 年底前上线并回移到 Playnite 10）。在恢复之前，插件不会出现在内置「附加组件」浏览器里，也没有自动更新，但手动安装完全不受影响。
-
-相关材料已经准备好，等你决定提交时直接用：
-
-| 文件 | 说明 |
-| --- | --- |
-| `addons/metadata/galgame-metadata_*.yaml` | 提交给官方库的 5 个 addon 清单（`Type: MetadataProvider`） |
-| `manifests/*.yaml` | 5 个 installer manifest（含 `.pext` 下载地址与版本号） |
-| `releases/*.pext` | 5 个安装包 |
-
-**提交前必须先建一个 `v0.4` 的 Release**，把 5 个 `.pext` 作为附件上传——installer manifest 里写死的就是这个路径。
-
-完整流程、字段规范和 AddonId 对照表见 [docs/publish-official.md](docs/publish-official.md)。
-
-## 目录结构
-
-```
-(仓库根目录)
-  src\Shared\MiniJson.cs        自带 JSON 解析（不依赖 Newtonsoft）
-  src\Shared\Common.cs          HTTP/限速/文本相似度/图片下载/ScrapedGame 模型
-  src\Shared\Sources.cs         ISiteSource 接口、自动匹配、平台映射、标签过滤
-  src\Shared\PlayniteSupport.cs Playnite SDK 适配层（设置、中文设置界面、MetadataProvider）
-  src\Shared\Picker.cs          手动选择窗口（候选条目 + 全部背景图点选）
-  src\Ymgal\...                 每个站点：<Site>Source.cs（抓取）+ <Site>Plugin.cs（入口）
-  tools\build.ps1               用 Roslyn csc + net462 参考程序集编译 5 个 DLL
-  tools\build-harness.ps1       构建无 Playnite 依赖的抓取测试
-  tools\build-probe.ps1         构建带 Playnite.SDK 的字段级测试
-  tools\build-ui.ps1            构建 UI 冒烟测试（中文设置界面 + 选择窗口）
-  dist\<Name>_<Guid>\           构建产物：extension.yaml + icon.png + DLL
-  addons\metadata\*.yaml        提交给官方附加组件库的清单
-  manifests\*.yaml              安装清单（官方库清单里的 InstallerManifestUrl 指向这里）
-  docs\                         接口笔记、截图、发布指南
-```
-
-## 故障排查
-
-- 插件是否加载：`%APPDATA%\Playnite\playnite.log` 里搜 `ExtensionFactory:Loaded plugin`。
-- 抓取日志：`%APPDATA%\Playnite\extensions.log`，logger 名为 `GalgameMetadata`（失败时会有 `Ymgal/Kungal/... download failed for "..."`）。
-- 抓取结果不对：先在 `tools\harness\Harness.exe` 里用同一标题跑一遍确认站点侧数据，再检查游戏名是否与站点标题差异过大（可在游戏链接里加站点 URL 强制精确匹配）。
-
-## 更新记录
-
-### v0.4（2026-10-26）
-
-- **修复描述不分段**：站点简介里的换行现在会转成 HTML `<br>` 再交给 Playnite（Playnite 描述框按 HTML 渲染，之前纯 `\n` 会被折叠成一整段）。简介清洗统一走 `CleanBlock`，自动识别站点本来返回的就是 HTML 的情况，避免二次转义。
-- **每次刮削都会弹窗**：即使游戏「链接」里已有站点地址，也只把该条目精确预选到候选首位，窗口仍会弹出让你确认；旧版遇到链接就直接静默返回。
-- **修复选择窗口顶部白条**：无边框可缩放窗口上 Windows 会画一条 DWM 浅色边框，改用 `WindowChrome`（`CaptionHeight=0`、`GlassFrameThickness=0`）后由自绘的暗色标题栏完全接管。
-- 左侧候选列表的超长标题改为省略号截断，不再溢出到右侧。
-- 版本号统一为 `0.4`（`extension.yaml`、`manifests/*.yaml`、`docs/publish-official.md` 同步）。
-
-### v0.3（2026-10-26）
-
-- 手动选择窗口：左侧候选条目、右侧全部背景图点选（仿 VNDB Nexus）。
-- 暗色主题窗口与中文设置界面。
-- Kungal 返回整组截图/CG（`include=screenshots`），其余站点附带 banner 与截图。
+- **Ymgal**：没有标签、社区评分和截图/背景图，只有一张主封面；发行商取自站点的「发行商」条目，个别作品为空。
+- **Kungal**：搜索必须打开「在搜索结果中包含成人（R18）作品」，否则 R18 作品会被站点过滤掉；标签里偶尔会混入厂商中文名或译名。
+- **Hikarinagi**：不提供聚合评分，「社区评分」字段留空；年龄分级靠封面标记与 R18 标签推断，个别作品可能不准。
+- **Shionlib**：没有发行商和评分；游客身份拿到的 R18 封面是模糊版，需要在设置里开启「包含成人作品」才会取原图。
+- **TouchGAL**：必须自备 API Token 才能使用；只提供 banner 一张背景图；重装插件后需要在设置里再确认一次 Token。
+- **匹配靠标题**：游戏名与站点标题差异大时（全英文名、罗马字、副标题过长）可能匹配失败或串到别的条目。最稳的做法是把站点页面地址加进游戏的「链接」，插件会按 ID 精确命中（窗口仍会弹出让你确认）。
+- **多来源 = 多个窗口**：一次勾选 N 个来源，就会依次弹出 N 个窗口，需要逐个确认或跳过。
+- **后台更新不弹窗**：Playnite 的后台下载元数据走全自动匹配，准确度不如手动确认；整库补全时建议逐个手动刮削。
+- **速度**：每站限速 0.25–0.85 秒一次请求，一部游戏通常 1–3 秒；开启图片下载后更慢，整库刮削需要较长时间。
+- **接口可能变更**：五个站点用的都是非官方或半公开接口，站点改版后插件可能需要更新版本才能继续使用。
 
 ## 贡献
 
