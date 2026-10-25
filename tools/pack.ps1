@@ -9,7 +9,8 @@ if (-not (Test-Path $pext)) { New-Item -ItemType Directory -Path $pext | Out-Nul
 $count = 0
 foreach ($folder in Get-ChildItem $dist -Directory)
 {
-    if ($folder.Name -eq 'pext') { continue }
+    if ($folder.Name -in @('pext', 'repo')) { continue }
+    if (-not (Test-Path (Join-Path $folder.FullName 'extension.yaml'))) { continue }
     $target = Join-Path $pext ($folder.Name + '.pext')
     if (Test-Path $target) { Remove-Item $target -Force }
     [System.IO.Compression.ZipFile]::CreateFromDirectory($folder.FullName, $target)

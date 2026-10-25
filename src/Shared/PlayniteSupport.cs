@@ -26,6 +26,8 @@ namespace GalgameMetadata.Playnite
         public bool DownloadScreenshots { get; set; }
         public int MaxTags { get; set; }
         public bool AcceptBestGuess { get; set; }
+        /// <summary>Ask the user to confirm the match and pick a background image before downloading.</summary>
+        public bool AskManualSelection { get; set; }
         /// <summary>Personal API token, only used by the TouchGAL provider.</summary>
         public string TouchgalApiToken { get; set; }
 
@@ -38,6 +40,7 @@ namespace GalgameMetadata.Playnite
             DownloadScreenshots = true;
             MaxTags = 15;
             AcceptBestGuess = false;
+            AskManualSelection = true;
         }
 
         public bool VerifySettings(out List<string> issues)
@@ -97,45 +100,56 @@ namespace GalgameMetadata.Playnite
 
             panel.Children.Add(new TextBlock
             {
-                Text = siteName + " metadata settings",
+                Text = siteName + " 元数据设置",
                 FontSize = 15,
                 FontWeight = FontWeights.SemiBold,
                 Margin = new Thickness(0, 0, 0, 4)
             });
             panel.Children.Add(new TextBlock
             {
-                Text = "Data source: " + siteUrl,
+                Text = "数据来源：" + siteUrl,
                 Opacity = 0.7,
                 Margin = new Thickness(0, 0, 0, 12)
             });
 
-            panel.Children.Add(ComboRow("Title language", settings.TitleLanguage, new[]
+            panel.Children.Add(ComboRow("标题语言", settings.TitleLanguage, new[]
             {
-                new KeyValuePair<string, string>("chinese", "Chinese when available"),
-                new KeyValuePair<string, string>("original", "Original title")
+                new KeyValuePair<string, string>("chinese", "有中文时用中文"),
+                new KeyValuePair<string, string>("original", "使用原标题")
             }, value => { settings.TitleLanguage = value; Save(); }));
 
-            panel.Children.Add(ComboRow("Description language", settings.DescriptionLanguage, new[]
+            panel.Children.Add(ComboRow("简介语言", settings.DescriptionLanguage, new[]
             {
-                new KeyValuePair<string, string>("chinese", "Chinese when available"),
-                new KeyValuePair<string, string>("original", "Original language")
+                new KeyValuePair<string, string>("chinese", "有中文时用中文"),
+                new KeyValuePair<string, string>("original", "使用原文")
             }, value => { settings.DescriptionLanguage = value; Save(); }));
 
-            panel.Children.Add(CheckRow("Include adult (R18) works in search results", settings.IncludeNsfwResults,
+            panel.Children.Add(CheckRow("在搜索结果中包含成人（R18）作品", settings.IncludeNsfwResults,
                 value => { settings.IncludeNsfwResults = value; Save(); }));
 
-            panel.Children.Add(CheckRow("Download cover image", settings.DownloadCover,
+            panel.Children.Add(CheckRow("下载封面图片", settings.DownloadCover,
                 value => { settings.DownloadCover = value; Save(); }));
 
-            panel.Children.Add(CheckRow("Download background image", settings.DownloadScreenshots,
+            panel.Children.Add(CheckRow("下载背景图片", settings.DownloadScreenshots,
                 value => { settings.DownloadScreenshots = value; Save(); }));
 
-            panel.Children.Add(CheckRow("Accept best guess when no exact title match is found", settings.AcceptBestGuess,
+            panel.Children.Add(CheckRow("没有精确匹配时接受最相近的结果", settings.AcceptBestGuess,
                 value => { settings.AcceptBestGuess = value; Save(); }));
+
+            panel.Children.Add(CheckRow("每次刮削时手动确认匹配结果并选择背景图", settings.AskManualSelection,
+                value => { settings.AskManualSelection = value; Save(); }));
 
             panel.Children.Add(new TextBlock
             {
-                Text = "Maximum number of tags",
+                Text = "开启后，每次下载元数据都会先弹出窗口：上方确认是哪一个条目，下方从该站点的全部背景图里点选一张。",
+                TextWrapping = TextWrapping.Wrap,
+                Opacity = 0.7,
+                Margin = new Thickness(0, 4, 0, 0)
+            });
+
+            panel.Children.Add(new TextBlock
+            {
+                Text = "最大标签数量（0 = 不限制）",
                 Margin = new Thickness(0, 10, 0, 2)
             });
             var tags = new TextBox
@@ -155,7 +169,7 @@ namespace GalgameMetadata.Playnite
             {
                 panel.Children.Add(new TextBlock
                 {
-                    Text = "TouchGAL API token",
+                    Text = "TouchGAL API 令牌",
                     Margin = new Thickness(0, 14, 0, 2)
                 });
                 var token = new TextBox
@@ -168,9 +182,8 @@ namespace GalgameMetadata.Playnite
                 panel.Children.Add(token);
                 panel.Children.Add(new TextBlock
                 {
-                    Text = "TouchGAL blocks plain shortcuts with a Cloudflare challenge, so this provider uses the " +
-                           "official developer API. Sign in at https://developer.touchgal.com, create an API token " +
-                           "and paste it here.",
+                    Text = "TouchGAL 的网页与网页 API 有 Cloudflare 挑战，普通请求会被 403 拦截，因此本插件改用官方开发者 API。" +
+                           "请登录 https://developer.touchgal.com 创建 API 令牌并粘贴到这里。",
                     TextWrapping = TextWrapping.Wrap,
                     Opacity = 0.7,
                     Margin = new Thickness(0, 6, 0, 0)
@@ -179,8 +192,8 @@ namespace GalgameMetadata.Playnite
 
             panel.Children.Add(new TextBlock
             {
-                Text = "The game name is used to search this site. Tip: add the site's page URL to the game's Links " +
-                       "to make later downloads exact (for example https://www.ymgal.games/ga22374).",
+                Text = "默认用游戏名在该站搜索。建议把该游戏的站点页面链接加到 Playnite 游戏的“链接”里，" +
+                       "这样之后刮削会按 ID 精确匹配（例如 https://www.ymgal.games/ga22374）。",
                 TextWrapping = TextWrapping.Wrap,
                 Opacity = 0.7,
                 Margin = new Thickness(0, 14, 0, 0)
@@ -354,8 +367,26 @@ namespace GalgameMetadata.Playnite
             try
             {
                 var options = _settings.ToFetchOptions();
-                _game = Task.Run(() => SourceResolver.ResolveAsync(_source, name, urls, options, cancel))
-                    .GetAwaiter().GetResult();
+                var interactive = _settings.AskManualSelection && !_options.IsBackgroundDownload && _api != null;
+                if (interactive)
+                {
+                    // Let the user pick the right search result and the screenshot used as background.
+                    var api = _api;
+                    var source = _source;
+                    var log = _log;
+                    var dispatcher = api.MainView == null ? null : api.MainView.UIDispatcher;
+                    _log.Info(string.Format("{0}: asking the user to pick a result for \"{1}\" (onUiThread={2}).",
+                        _source.SiteKey, name, dispatcher != null && dispatcher.CheckAccess()));
+                    _game = PumpedRun.Run(dispatcher,
+                        () => InteractiveResolver.Resolve(api, source, name, urls, options, cancel, log));
+                }
+                else
+                {
+                    _game = Task.Run(() => SourceResolver.ResolveAsync(_source, name, urls, options, cancel))
+                        .GetAwaiter().GetResult();
+                }
+
+                // null means the user skipped this source on purpose, which is not an error.
                 if (_game != null)
                 {
                     _log.Info(string.Format("{0}: matched \"{1}\" to {2} ({3}).",

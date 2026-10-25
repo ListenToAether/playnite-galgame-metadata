@@ -15,7 +15,7 @@ namespace GalgameMetadata.Kungal
     {
         private const string ApiBase = "https://api.nextmoe.dev/v2/catalog";
         private const int MinIntervalMs = 850;
-        private const string DetailIncludes = "titles,refs,intros,companies,ratings,tags,playtimes,releases";
+        private const string DetailIncludes = "titles,refs,intros,companies,ratings,tags,playtimes,releases,screenshots";
 
         public string Name { get { return "Kungal"; } }
         public string SiteKey { get { return "Kungal"; } }
@@ -213,6 +213,7 @@ namespace GalgameMetadata.Kungal
 
             ApplyScore(game, work);
             AddLinks(game, work, id);
+            AddScreenshots(game, work, options);
 
             foreach (var release in J.Arr(work, "releases"))
             {
@@ -222,6 +223,31 @@ namespace GalgameMetadata.Kungal
             }
 
             return game;
+        }
+
+        /// <summary>
+        /// NextMoe exposes the full screenshot set (include=screenshots, typically 20+ 1920x1080 images,
+        /// mostly mirrored from VNDB) - that is the CG gallery the picker window shows on the right.
+        /// </summary>
+        private static void AddScreenshots(ScrapedGame game, JsonValue work, FetchOptions options)
+        {
+            foreach (var shot in J.Arr(work, "screenshots"))
+            {
+                var url = J.Str(shot, "url");
+                if (string.IsNullOrWhiteSpace(url)) continue;
+                var sexual = J.Str(shot, "sexual");
+                if (!options.IncludeNsfw && !string.IsNullOrEmpty(sexual)
+                    && !string.Equals(sexual, "safe", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+                if (!game.Screenshots.Contains(url)) game.Screenshots.Add(url);
+            }
+
+            if (string.IsNullOrEmpty(game.BannerUrl) && game.Screenshots.Count > 0)
+            {
+                game.BannerUrl = game.Screenshots[0];
+            }
         }
 
         private static string PickIntro(JsonValue work, FetchOptions options)

@@ -9,7 +9,8 @@ if (-not (Test-Path $extensions)) { throw "Playnite extensions folder not found:
 $installed = 0
 foreach ($folder in Get-ChildItem $dist -Directory)
 {
-    if ($folder.Name -eq 'pext') { continue }
+    if ($folder.Name -in @('pext', 'repo')) { continue }
+    if (-not (Test-Path (Join-Path $folder.FullName 'extension.yaml'))) { continue }
     $target = Join-Path $extensions $folder.Name
     if (Test-Path $target) { Remove-Item $target -Recurse -Force }
     Copy-Item $folder.FullName $target -Recurse -Force
