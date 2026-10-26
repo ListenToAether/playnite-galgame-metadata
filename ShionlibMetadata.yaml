@@ -1,8 +1,0 @@
-AddonId: ShionlibMetadata_e882fba8-217a-4fcd-a400-b53b3392a734
-Packages:
-  - Version: 0.8
-    RequiredApiVersion: 6.15.0
-    ReleaseDate: 2026-10-26
-    PackageUrl: https://github.com/zxc34731116797/playnite-galgame-metadata/releases/download/v0.8/ShionlibMetadata_e882fba8-217a-4fcd-a400-b53b3392a734.pext
-    Changelog:
-      - 'v0.8：Ymgal 标签只保留 STAFF 署名的人名'
