@@ -76,12 +76,6 @@ This is the VNDB Nexus style workflow. It is on by default ("Confirm the match a
 | Maximum number of tags (0 = unlimited) | 15 | 0 means unlimited |
 | Accept the closest result when nothing matches exactly | Off | When off, a low score raises an error instead of writing a wrong match; when on, the first search hit is used |
 
-The TouchGAL plugin additionally has a token box. Everything else is a dropdown, checkbox or number box.
-
-| Settings view after switching to English |
-| --- |
-| ![English settings](docs/settings-en.png) |
-
 ## Matching rules and tips
 
 - By default the **game name** is searched on the site, then a similarity score (character bigrams for Chinese/Japanese, plus containment) picks the best hit as the preselected candidate. If the score is not high enough, the plugin fetches the details of the top 3 candidates and compares every title (original, Chinese, aliases); it only uses one when they agree, otherwise it reports an error instead of writing garbage.
