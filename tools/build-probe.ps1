@@ -16,6 +16,7 @@ $sources += Join-Path $base 'src\Shared\Common.cs'
 $sources += Join-Path $base 'src\Shared\Sources.cs'
 $sources += Join-Path $base 'src\Shared\PlayniteSupport.cs'
 $sources += Join-Path $base 'src\Shared\Picker.cs'
+$sources += Join-Path $base 'src\Shared\Strings.cs'
 foreach ($site in @('Ymgal','Kungal','Hikarinagi','Shionlib','Touchgal'))
 {
     $sources += Get-ChildItem (Join-Path $base "src\$site") -Filter '*Source.cs' | Select-Object -ExpandProperty FullName

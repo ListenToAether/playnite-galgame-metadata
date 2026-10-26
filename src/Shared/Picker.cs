@@ -130,7 +130,7 @@ namespace GalgameMetadata.Playnite
             }
 
             if (hits.Count == 0)
-                throw new ScrapeException(string.Format("{0} 没有搜索到“{1}”的结果。", source.Name, query));
+                throw new ScrapeException(string.Format(L.T("{0} 没有搜索到“{1}”的结果。", "{0} found no results for \"{1}\"."), source.Name, query));
 
             var preselectId = linkId;
             if (string.IsNullOrWhiteSpace(preselectId))
@@ -245,7 +245,7 @@ namespace GalgameMetadata.Playnite
         };
         private readonly Button _ok = new Button
         {
-            Content = "使用这个条目",
+            Content = L.T("使用这个条目", "Use this entry"),
             Width = 130,
             Height = 30,
             IsEnabled = false,
@@ -254,7 +254,7 @@ namespace GalgameMetadata.Playnite
         };
         private readonly CheckBox _useBackground = new CheckBox
         {
-            Content = "下载背景图（可在右侧点选）",
+            Content = L.T("下载背景图（可在右侧点选）", "Download background image (pick one on the right)"),
             IsChecked = true,
             Foreground = Theme.Text,
             VerticalAlignment = VerticalAlignment.Center,
@@ -278,7 +278,7 @@ namespace GalgameMetadata.Playnite
             _cancel = cancel;
             _log = log;
 
-            Title = source.Name + " - 选择匹配的条目";
+            Title = source.Name + L.T(" - 选择匹配的条目", " - choose the matching entry");
             Width = 1000;
             Height = 700;
             MinWidth = 760;
@@ -355,7 +355,7 @@ namespace GalgameMetadata.Playnite
                 Width = 34,
                 Height = 26,
                 Style = Theme.CloseButton,
-                ToolTip = "关闭（不选这个来源）"
+                ToolTip = L.T("关闭（不选这个来源）", "Close (skip this source)")
             };
             close.Click += delegate { DialogResult = false; };
             DockPanel.SetDock(close, Dock.Right);
@@ -364,14 +364,14 @@ namespace GalgameMetadata.Playnite
             var headerPanel = new StackPanel();
             headerPanel.Children.Add(new TextBlock
             {
-                Text = "从 " + _source.Name + " 选择要使用的条目",
+                Text = L.T("从 " + _source.Name + " 选择要使用的条目", "Choose the entry to use from " + _source.Name + ""),
                 FontSize = 17,
                 FontWeight = FontWeights.SemiBold,
                 Foreground = Theme.Text
             });
             headerPanel.Children.Add(new TextBlock
             {
-                Text = "Playnite 里的游戏名：" + gameName + "    数据源：" + _source.HomeUrl,
+                Text = L.T("Playnite 里的游戏名：", "Game name in Playnite: ") + gameName + L.T("    数据源：", "    Data source: ") + _source.HomeUrl,
                 Opacity = 0.7,
                 Foreground = Theme.TextDim,
                 Margin = new Thickness(0, 3, 0, 0)
@@ -390,7 +390,7 @@ namespace GalgameMetadata.Playnite
             };
             var footerPanel = new DockPanel();
             var buttons = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
-            var cancelButton = new Button { Content = "跳过这个来源", Width = 120, Height = 30, Style = Theme.Button };
+            var cancelButton = new Button { Content = L.T("跳过这个来源", "Skip this source"), Width = 120, Height = 30, Style = Theme.Button };
             cancelButton.Click += delegate { DialogResult = false; };
             _ok.Click += delegate { Confirm(); };
             buttons.Children.Add(_useBackground);
@@ -458,7 +458,7 @@ namespace GalgameMetadata.Playnite
             var texts = new StackPanel { VerticalAlignment = VerticalAlignment.Center, Width = 272 };
             texts.Children.Add(new TextBlock
             {
-                Text = Text.FirstNonEmpty(hit.Title, hit.AltTitle, "(无标题)"),
+                Text = Text.FirstNonEmpty(hit.Title, hit.AltTitle, L.T("(无标题)", "(untitled)")),
                 FontWeight = FontWeights.SemiBold,
                 TextWrapping = TextWrapping.Wrap,
                 TextTrimming = TextTrimming.CharacterEllipsis,
@@ -480,7 +480,7 @@ namespace GalgameMetadata.Playnite
             if (hit.Year.HasValue) meta.Add(hit.Year.Value.ToString());
             var titleScore = Math.Max(Text.Similarity(_gameName, hit.Title),
                 Text.Similarity(_gameName, Text.FirstNonEmpty(hit.AltTitle, hit.Title)));
-            meta.Add(string.Format("匹配度 {0:0}%", titleScore * 100));
+            meta.Add(string.Format(L.T("匹配度 {0:0}%", "match {0:0}%"), titleScore * 100));
             texts.Children.Add(new TextBlock
             {
                 Text = string.Join(" · ", meta.Where(m => !string.IsNullOrEmpty(m)).ToArray()),
@@ -509,7 +509,7 @@ namespace GalgameMetadata.Playnite
 
             candidate.Loading = true;
             _ok.IsEnabled = false;
-            _status.Text = "正在获取该条目的资料和背景图…";
+            _status.Text = L.T("正在获取该条目的资料和背景图…", "Loading details and background images…");
 
             Task.Run(delegate
             {
@@ -531,7 +531,7 @@ namespace GalgameMetadata.Playnite
                         candidate.Loading = false;
                         if (_current == index)
                         {
-                            _status.Text = "获取失败：" + ex.Message;
+                            _status.Text = L.T("获取失败：", "Download failed: ") + ex.Message;
                             _ok.IsEnabled = false;
                         }
                     }));
@@ -549,22 +549,22 @@ namespace GalgameMetadata.Playnite
 
             if (game == null)
             {
-                _status.Text = "没有取到资料。";
+                _status.Text = L.T("没有取到资料。", "No data was returned.");
                 return;
             }
 
             var details = new List<string>();
             if (!string.IsNullOrWhiteSpace(game.Name)) details.Add(game.Name);
-            if (!string.IsNullOrWhiteSpace(game.OriginalName) && game.OriginalName != game.Name) details.Add("原名：" + game.OriginalName);
-            if (game.Developers != null && game.Developers.Count > 0) details.Add("开发商：" + string.Join("、", game.Developers.Distinct().ToArray()));
-            if (game.Publishers != null && game.Publishers.Count > 0) details.Add("发行商：" + string.Join("、", game.Publishers.Distinct().ToArray()));
+            if (!string.IsNullOrWhiteSpace(game.OriginalName) && game.OriginalName != game.Name) details.Add(L.T("原名：", "Original title: ") + game.OriginalName);
+            if (game.Developers != null && game.Developers.Count > 0) details.Add(L.T("开发商：", "Developer: ") + string.Join(L.T("、", ", "), game.Developers.Distinct().ToArray()));
+            if (game.Publishers != null && game.Publishers.Count > 0) details.Add(L.T("发行商：", "Publisher: ") + string.Join(L.T("、", ", "), game.Publishers.Distinct().ToArray()));
             if (game.Year.HasValue)
             {
-                details.Add("发售：" + (game.Month.HasValue
+                details.Add(L.T("发售：", "Release: ") + (game.Month.HasValue
                     ? string.Format("{0}-{1:00}", game.Year.Value, game.Month.Value)
                     : game.Year.Value.ToString()));
             }
-            if (game.Tags != null && game.Tags.Count > 0) details.Add("标签：" + string.Join("、", game.Tags.Take(10).ToArray()));
+            if (game.Tags != null && game.Tags.Count > 0) details.Add(L.T("标签：", "Tags: ") + string.Join(L.T("、", ", "), game.Tags.Take(10).ToArray()));
             _info.Text = string.Join("\n", details.ToArray());
 
             var urls = new List<string>();
@@ -579,7 +579,8 @@ namespace GalgameMetadata.Playnite
 
             if (urls.Count == 0)
             {
-                _status.Text = "该站点没有提供背景图片，将只下载文字资料和封面。";
+                _status.Text = L.T("该站点没有提供背景图片，将只下载文字资料和封面。",
+                    "This site provides no background images; only text data and the cover will be downloaded.");
                 _ok.IsEnabled = true;
                 _selectedBackground = null;
                 _useBackground.IsChecked = false;
@@ -591,7 +592,8 @@ namespace GalgameMetadata.Playnite
             {
                 _backgrounds.Children.Add(BuildThumbnail(url));
             }
-            _status.Text = string.Format("共 {0} 张背景图，点选一张后按“使用这个条目”。", urls.Count);
+            _status.Text = string.Format(L.T("共 {0} 张背景图，点选一张后按“使用这个条目”。",
+                "{0} background image(s) available - pick one, then press \"Use this entry\"."), urls.Count);
             _ok.IsEnabled = true;
         }
 

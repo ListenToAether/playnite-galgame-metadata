@@ -13,12 +13,13 @@ New-Item -ItemType Directory -Path $stage -Force | Out-Null
 
 Copy-Item (Join-Path $root 'src') (Join-Path $stage 'src') -Recurse -Force
 Copy-Item (Join-Path $root 'README.md') $stage -Force
+if (Test-Path (Join-Path $root 'README.en.md')) { Copy-Item (Join-Path $root 'README.en.md') $stage -Force }
 Copy-Item (Join-Path $root 'LICENSE') $stage -Force
 Copy-Item (Join-Path $root '.gitignore') $stage -Force
 
 $tools = Join-Path $stage 'tools'
 New-Item -ItemType Directory -Path $tools -Force | Out-Null
-foreach ($name in @('build.ps1', 'install.ps1', 'install-and-restart.cmd', 'pack.ps1', 'build-harness.ps1', 'build-probe.ps1', 'build-ui.ps1', 'test-settings-view.ps1', 'Harness.cs', 'Probe.cs', 'UiSmoke.cs', 'make-repo.ps1', 'make-release.ps1')) {
+foreach ($name in @('build.ps1', 'install.ps1', 'install-and-restart.cmd', 'pack.ps1', 'build-harness.ps1', 'build-probe.ps1', 'build-ui.ps1', 'test-settings-view.ps1', 'Harness.cs', 'Probe.cs', 'UiSmoke.cs', 'make-repo.ps1', 'make-release.ps1', 'make-icons.ps1')) {
     $source = Join-Path $root ('tools\' + $name)
     if (Test-Path $source) { Copy-Item $source $tools -Force }
 }
@@ -48,6 +49,14 @@ Get-ChildItem (Join-Path $root 'dist\pext') -Filter *.pext -ErrorAction Silently
 foreach ($dirName in @('addons', 'manifests')) {
     $src = Join-Path $root $dirName
     if (Test-Path $src) { Copy-Item $src (Join-Path $stage $dirName) -Recurse -Force }
+}
+
+# Site icons used by build.ps1 (the source\ cache is local only).
+$iconsSource = Join-Path $root 'assets\icons'
+if (Test-Path $iconsSource) {
+    $iconsTarget = Join-Path $stage 'assets\icons'
+    New-Item -ItemType Directory -Path $iconsTarget -Force | Out-Null
+    Get-ChildItem $iconsSource -Filter *.png -File | ForEach-Object { Copy-Item $_.FullName $iconsTarget -Force }
 }
 
 $target = Join-Path $root 'dist\repo\playnite-galgame-metadata.zip'

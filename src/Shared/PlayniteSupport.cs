@@ -17,6 +17,8 @@ namespace GalgameMetadata.Playnite
     /// <summary>Settings shared by all five metadata plugins.</summary>
     public class PluginSettings : ISettings
     {
+        /// <summary>"zh" or "en" - language of the plugin UI (settings window, picker, notifications).</summary>
+        public string UiLanguage { get; set; }
         /// <summary>"chinese" or "original".</summary>
         public string TitleLanguage { get; set; }
         /// <summary>"chinese" or "original".</summary>
@@ -33,6 +35,7 @@ namespace GalgameMetadata.Playnite
 
         public PluginSettings()
         {
+            UiLanguage = "zh";
             TitleLanguage = "chinese";
             DescriptionLanguage = "chinese";
             IncludeNsfwResults = true;
@@ -82,6 +85,10 @@ namespace GalgameMetadata.Playnite
     public class SettingsView : UserControl
     {
         private readonly Action _save;
+        private PluginSettings _settings;
+        private string _siteName;
+        private string _siteUrl;
+        private bool _showApiToken;
 
         public SettingsView(PluginSettings settings, string siteName, string siteUrl)
             : this(settings, siteName, siteUrl, false, null)
@@ -96,52 +103,77 @@ namespace GalgameMetadata.Playnite
         public SettingsView(PluginSettings settings, string siteName, string siteUrl, bool showApiToken, Action save)
         {
             _save = save;
+            L.Ui = settings.UiLanguage;
+            Build(settings, siteName, siteUrl, showApiToken);
+        }
+
+        private void Build(PluginSettings settings, string siteName, string siteUrl, bool showApiToken)
+        {
+            _settings = settings;
+            _siteName = siteName;
+            _siteUrl = siteUrl;
+            _showApiToken = showApiToken;
+
             var panel = new StackPanel { Margin = new Thickness(14) };
 
             panel.Children.Add(new TextBlock
             {
-                Text = siteName + " 元数据设置",
+                Text = siteName + L.T(" 元数据设置", " metadata settings"),
                 FontSize = 15,
                 FontWeight = FontWeights.SemiBold,
                 Margin = new Thickness(0, 0, 0, 4)
             });
             panel.Children.Add(new TextBlock
             {
-                Text = "数据来源：" + siteUrl,
+                Text = L.T("数据来源：", "Data source: ") + siteUrl,
                 Opacity = 0.7,
                 Margin = new Thickness(0, 0, 0, 12)
             });
 
-            panel.Children.Add(ComboRow("标题语言", settings.TitleLanguage, new[]
+            panel.Children.Add(ComboRow(L.T("界面语言", "Language"), settings.UiLanguage, new[]
             {
-                new KeyValuePair<string, string>("chinese", "有中文时用中文"),
-                new KeyValuePair<string, string>("original", "使用原标题")
+                new KeyValuePair<string, string>("zh", "中文"),
+                new KeyValuePair<string, string>("en", "English")
+            }, value =>
+            {
+                settings.UiLanguage = value;
+                L.Ui = value;
+                Save();
+                // Rebuild once the combo box finished raising its own event.
+                Dispatcher.BeginInvoke((Action)Rebuild);
+            }));
+
+            panel.Children.Add(ComboRow(L.T("标题语言", "Title language"), settings.TitleLanguage, new[]
+            {
+                new KeyValuePair<string, string>("chinese", L.T("有中文时用中文", "Use Chinese when available")),
+                new KeyValuePair<string, string>("original", L.T("使用原标题", "Use original title"))
             }, value => { settings.TitleLanguage = value; Save(); }));
 
-            panel.Children.Add(ComboRow("简介语言", settings.DescriptionLanguage, new[]
+            panel.Children.Add(ComboRow(L.T("简介语言", "Description language"), settings.DescriptionLanguage, new[]
             {
-                new KeyValuePair<string, string>("chinese", "有中文时用中文"),
-                new KeyValuePair<string, string>("original", "使用原文")
+                new KeyValuePair<string, string>("chinese", L.T("有中文时用中文", "Use Chinese when available")),
+                new KeyValuePair<string, string>("original", L.T("使用原文", "Use original text"))
             }, value => { settings.DescriptionLanguage = value; Save(); }));
 
-            panel.Children.Add(CheckRow("在搜索结果中包含成人（R18）作品", settings.IncludeNsfwResults,
+            panel.Children.Add(CheckRow(L.T("在搜索结果中包含成人（R18）作品", "Include adult (R18) works in search results"), settings.IncludeNsfwResults,
                 value => { settings.IncludeNsfwResults = value; Save(); }));
 
-            panel.Children.Add(CheckRow("下载封面图片", settings.DownloadCover,
+            panel.Children.Add(CheckRow(L.T("下载封面图片", "Download cover image"), settings.DownloadCover,
                 value => { settings.DownloadCover = value; Save(); }));
 
-            panel.Children.Add(CheckRow("下载背景图片", settings.DownloadScreenshots,
+            panel.Children.Add(CheckRow(L.T("下载背景图片", "Download background image"), settings.DownloadScreenshots,
                 value => { settings.DownloadScreenshots = value; Save(); }));
 
-            panel.Children.Add(CheckRow("没有精确匹配时接受最相近的结果", settings.AcceptBestGuess,
+            panel.Children.Add(CheckRow(L.T("没有精确匹配时接受最相近的结果", "Accept the closest result when nothing matches exactly"), settings.AcceptBestGuess,
                 value => { settings.AcceptBestGuess = value; Save(); }));
 
-            panel.Children.Add(CheckRow("每次刮削时手动确认匹配结果并选择背景图", settings.AskManualSelection,
+            panel.Children.Add(CheckRow(L.T("每次刮削时手动确认匹配结果并选择背景图", "Confirm the match and pick a background image on every download"), settings.AskManualSelection,
                 value => { settings.AskManualSelection = value; Save(); }));
 
             panel.Children.Add(new TextBlock
             {
-                Text = "开启后，每次下载元数据都会先弹出窗口：上方确认是哪一个条目，下方从该站点的全部背景图里点选一张。",
+                Text = L.T("开启后，每次下载元数据都会先弹出窗口：上方确认是哪一个条目，下方从该站点的全部背景图里点选一张。",
+                    "When enabled, every metadata download first opens a window: confirm the entry at the top and pick one of the site's background images below."),
                 TextWrapping = TextWrapping.Wrap,
                 Opacity = 0.7,
                 Margin = new Thickness(0, 4, 0, 0)
@@ -149,7 +181,7 @@ namespace GalgameMetadata.Playnite
 
             panel.Children.Add(new TextBlock
             {
-                Text = "最大标签数量（0 = 不限制）",
+                Text = L.T("最大标签数量（0 = 不限制）", "Maximum number of tags (0 = unlimited)"),
                 Margin = new Thickness(0, 10, 0, 2)
             });
             var tags = new TextBox
@@ -169,7 +201,7 @@ namespace GalgameMetadata.Playnite
             {
                 panel.Children.Add(new TextBlock
                 {
-                    Text = "TouchGAL API 令牌",
+                    Text = L.T("TouchGAL API 令牌", "TouchGAL API token"),
                     Margin = new Thickness(0, 14, 0, 2)
                 });
                 var token = new TextBox
@@ -182,8 +214,9 @@ namespace GalgameMetadata.Playnite
                 panel.Children.Add(token);
                 panel.Children.Add(new TextBlock
                 {
-                    Text = "TouchGAL 的网页与网页 API 有 Cloudflare 挑战，普通请求会被 403 拦截，因此本插件改用官方开发者 API。" +
-                           "请登录 https://developer.touchgal.com 创建 API 令牌并粘贴到这里。",
+                    Text = L.T(
+                        "TouchGAL 的网页与网页 API 有 Cloudflare 挑战，普通请求会被 403 拦截，因此本插件改用官方开发者 API。请登录 https://developer.touchgal.com 创建 API 令牌并粘贴到这里。",
+                        "TouchGAL's website and web API are behind a Cloudflare challenge, so plain requests get 403. This plugin uses the official developer API instead: sign in at https://developer.touchgal.com, create a token and paste it here."),
                     TextWrapping = TextWrapping.Wrap,
                     Opacity = 0.7,
                     Margin = new Thickness(0, 6, 0, 0)
@@ -192,8 +225,9 @@ namespace GalgameMetadata.Playnite
 
             panel.Children.Add(new TextBlock
             {
-                Text = "默认用游戏名在该站搜索。建议把该游戏的站点页面链接加到 Playnite 游戏的“链接”里，" +
-                       "这样之后刮削会按 ID 精确匹配（例如 https://www.ymgal.games/ga22374）。",
+                Text = L.T(
+                    "默认用游戏名在该站搜索。建议把该游戏的站点页面链接加到 Playnite 游戏的“链接”里，这样之后刮削会按 ID 精确匹配（例如 https://www.ymgal.games/ga22374）。",
+                    "The game name is used to search this site. Adding the site page of a game to the game's Links in Playnite makes later downloads match by ID (for example https://www.ymgal.games/ga22374)."),
                 TextWrapping = TextWrapping.Wrap,
                 Opacity = 0.7,
                 Margin = new Thickness(0, 14, 0, 0)
@@ -205,6 +239,12 @@ namespace GalgameMetadata.Playnite
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
                 Content = panel
             };
+        }
+
+        private void Rebuild()
+        {
+            Content = null;
+            Build(_settings, _siteName, _siteUrl, _showApiToken);
         }
 
         private void Save()
@@ -366,6 +406,8 @@ namespace GalgameMetadata.Playnite
 
             try
             {
+                // Apply the plugin's UI language before anything can show text to the user.
+                L.Ui = _settings.UiLanguage;
                 var options = _settings.ToFetchOptions();
                 var interactive = _settings.AskManualSelection && !_options.IsBackgroundDownload && _api != null;
                 if (interactive)

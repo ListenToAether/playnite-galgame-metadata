@@ -1,8 +1,8 @@
 AddonId: YmgalMetadata_2460c7c5-5f79-4ebe-826d-cba2084e2464
 Packages:
-  - Version: 0.4
+  - Version: 0.6
     RequiredApiVersion: 6.15.0
     ReleaseDate: 2026-10-26
-    PackageUrl: https://github.com/zxc34731116797/playnite-galgame-metadata/releases/download/v0.4/YmgalMetadata_2460c7c5-5f79-4ebe-826d-cba2084e2464.pext
+    PackageUrl: https://github.com/zxc34731116797/playnite-galgame-metadata/releases/download/v0.6/YmgalMetadata_2460c7c5-5f79-4ebe-826d-cba2084e2464.pext
     Changelog:
-      - 'v0.4：完善手动选择与描述渲染，详见 README 更新记录'
+      - 'v0.6：设置界面支持中文/English 切换，仓库新增英文 README'

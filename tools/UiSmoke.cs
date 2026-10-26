@@ -87,6 +87,21 @@ namespace GalgameMetadata.UiSmoke
                 }
                 Console.WriteLine("UI smoke OK");
 
+                // The same window must render all of its labels in English when the plugin language is English.
+                L.Ui = "en";
+                var englishWindow = new SelectionWindow(new FakeSource(), "test game", hits, new FetchOptions(),
+                    CancellationToken.None, "with-bg", null);
+                englishWindow.Measure(new Size(1000, 700));
+                englishWindow.Arrange(new Rect(0, 0, 1000, 700));
+                var englishTexts = new List<string>();
+                Collect(englishWindow.Content, englishTexts);
+                Console.WriteLine("english window title: " + englishWindow.Title);
+                foreach (var text in englishTexts)
+                {
+                    if (!string.IsNullOrWhiteSpace(text)) Console.WriteLine("  en - " + text);
+                }
+                L.Ui = "zh";
+
                 // Descriptions are plain text with newlines; Playnite renders HTML, so ToHtml must escape
                 // and turn every line break into <br>.
                 var html = Text.ToHtml("第一段\r\n第二段\n\n第三段 & <test>");
@@ -96,6 +111,7 @@ namespace GalgameMetadata.UiSmoke
                     throw new InvalidOperationException("ToHtml output is wrong: " + html);
                 }
 
+                CaptureSettingsView();
                 TestPumping();
             }
             catch (Exception ex)
@@ -303,6 +319,36 @@ namespace GalgameMetadata.UiSmoke
             if (picked == null) return "window opened but nothing was confirmed";
             return string.Format("windowShown={0} | linkId={1} | matched={2} | siteUrl={3}",
                 windowShown, id, picked.Name, picked.SiteUrl);
+        }
+
+        private static void CaptureSettingsView()
+        {
+            var settings = new PluginSettings();
+            settings.UiLanguage = "en";
+            L.Ui = "en";
+            try
+            {
+                var view = new SettingsView(settings, "Kungal", "https://www.kungal.com/", false, delegate { });
+                var host = new Window
+                {
+                    Title = "settings-en",
+                    Width = 640,
+                    Height = 780,
+                    WindowStyle = WindowStyle.None,
+                    ShowInTaskbar = false,
+                    Background = Theme.Window,
+                    Content = view
+                };
+                host.Show();
+                host.UpdateLayout();
+                Capture(host, "settings-en");
+                host.Close();
+                Console.WriteLine("settings screenshot: english");
+            }
+            finally
+            {
+                L.Ui = "zh";
+            }
         }
 
         private static void Capture(Window window, string tag)

@@ -89,7 +89,7 @@ foreach ($site in $sites)
 Id: $folderName
 Name: $($site.Name)
 Author: galgame-metadata
-Version: 0.4
+Version: 0.6
 Module: $($site.Assembly).dll
 Type: MetadataProvider
 Icon: icon.png
@@ -99,6 +99,10 @@ Links:
 "@
     [System.IO.File]::WriteAllText((Join-Path $outDir 'extension.yaml'), $yaml, (New-Object System.Text.UTF8Encoding($false)))
     New-Icon (Join-Path $outDir 'icon.png') $site.Color $site.Letters
+
+    # Prefer the real site icon fetched by tools\make-icons.ps1.
+    $siteIcon = Join-Path (Join-Path $root 'assets\icons') "$($site.Folder).png"
+    if (Test-Path $siteIcon) { Copy-Item $siteIcon (Join-Path $outDir 'icon.png') -Force }
 }
 
 if ($failed.Count -gt 0) { throw "Build failed: $($failed -join ', ')" }
