@@ -13,7 +13,7 @@ Five Playnite **metadata provider** plugins that pull data from sites which curr
 | TouchGAL Metadata Provider | https://www.touchgal.ink/ | `TouchgalMetadata_af145bc3-1883-4933-a1d7-d5124de2cccd` | same name | `TouchgalMetadata.dll` |
 
 - Target framework: .NET Framework 4.6.2 (same as Playnite 10.51). No third-party DLLs; each plugin is standalone and can be enabled or disabled on its own.
-- Current version **v0.6**. Tested on Playnite 10.51.0.23209: all five load together without errors, the four sources that need no token scrape fine, TouchGAL needs your own API token. The settings view and the manual selection window are dark-themed and available in **Chinese and English**.
+- Current version. Tested on Playnite 10.51.0.23209: all five load together without errors, the four sources that need no token scrape fine, TouchGAL needs your own API token. The settings view and the manual selection window are dark-themed and available in **Chinese and English**.
 
 ## Installation
 
