@@ -175,6 +175,7 @@ namespace GalgameMetadata.Ymgal
 
             await AddDeveloperAsync(game, J.Str(node, "developerId"), options, cancel).ConfigureAwait(false);
             AddPublishers(game, J.Arr(node, "moreEntry"));
+            AddStaffTags(game, node, options);
 
             game.Links.Add(new ScrapedLink("Ymgal", game.SiteUrl));
             foreach (var site in J.Arr(node, "website"))
@@ -209,6 +210,61 @@ namespace GalgameMetadata.Ymgal
             catch (Exception)
             {
                 // Developer lookup is nice to have only.
+            }
+        }
+
+        /// <summary>
+        /// Ymgal has no tag list; the information a tag would carry lives in the STAFF card
+        /// (script, art, music, songs, direction...). Each credit becomes a "job: person" tag.
+        /// "其他" is a catch-all bucket holding English production notes, so it is skipped.
+        /// </summary>
+        private static void AddStaffTags(ScrapedGame game, JsonValue gameNode, FetchOptions options)
+        {
+            var max = options.MaxTags <= 0 ? int.MaxValue : options.MaxTags;
+            if (game.Tags.Count >= max) return;
+
+            var brands = new List<string>();
+            brands.AddRange(game.Developers);
+            brands.AddRange(game.Publishers);
+
+            var entries = new List<KeyValuePair<int, string>>();
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var item in J.Arr(gameNode, "staff"))
+            {
+                var person = (J.Str(item, "empName") ?? string.Empty).Trim();
+                if (person.Length == 0 || string.Equals(person, "None", StringComparison.OrdinalIgnoreCase)) continue;
+
+                var job = (J.Str(item, "jobName") ?? string.Empty).Trim();
+                var rank = JobRank(job);
+                if (rank < 0) continue;
+
+                // Only the person's name is kept: the job is a grouping key, not tag text.
+                if (!seen.Add(person)) continue;
+                if (TagFilter.IsJunk(person, game, brands)) continue;
+
+                entries.Add(new KeyValuePair<int, string>(rank, person));
+            }
+
+            // Main credits first (script/art/design/music/songs) so a low tag limit keeps them.
+            entries.Sort((a, b) => a.Key.CompareTo(b.Key));
+            foreach (var entry in entries)
+            {
+                game.Tags.Add(entry.Value);
+                if (game.Tags.Count >= max) break;
+            }
+        }
+
+        private static int JobRank(string job)
+        {
+            switch (job)
+            {
+                case "脚本": return 0;
+                case "原画": return 1;
+                case "人物设计": return 2;
+                case "音乐": return 3;
+                case "歌曲": return 4;
+                case "导演/监督": return 5;
+                default: return -1;
             }
         }
 

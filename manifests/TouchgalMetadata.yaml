@@ -1,8 +1,8 @@
 AddonId: TouchgalMetadata_af145bc3-1883-4933-a1d7-d5124de2cccd
 Packages:
-  - Version: 0.6
+  - Version: 0.8
     RequiredApiVersion: 6.15.0
     ReleaseDate: 2026-10-26
-    PackageUrl: https://github.com/zxc34731116797/playnite-galgame-metadata/releases/download/v0.6/TouchgalMetadata_af145bc3-1883-4933-a1d7-d5124de2cccd.pext
+    PackageUrl: https://github.com/zxc34731116797/playnite-galgame-metadata/releases/download/v0.8/TouchgalMetadata_af145bc3-1883-4933-a1d7-d5124de2cccd.pext
     Changelog:
-      - 'v0.6：设置界面支持中文/English 切换，仓库新增英文 README'
+      - 'v0.8：Ymgal 标签只保留 STAFF 署名的人名'

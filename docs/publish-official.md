@@ -26,11 +26,11 @@
 
 ## 三、提交前必须先做的事
 
-1. **建一个 tag 为 `v0.6` 的 Release**，把 `releases/` 下的 5 个 `.pext` 作为附件上传，文件名保持不变。
+1. **建一个 tag 为 `v0.8` 的 Release**，把 `releases/` 下的 5 个 `.pext` 作为附件上传，文件名保持不变。
    installer manifest 里写死的下载地址是：
 
    ```
-   https://github.com/zxc34731116797/playnite-galgame-metadata/releases/download/v0.6/<AddonId>.pext
+   https://github.com/zxc34731116797/playnite-galgame-metadata/releases/download/v0.8/<AddonId>.pext
    ```
 
    目前仓库里的 Release 是「整仓库源码 zip」，路径对不上，需要替换。
