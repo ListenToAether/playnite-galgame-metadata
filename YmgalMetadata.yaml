@@ -1,0 +1,8 @@
+AddonId: YmgalMetadata_2460c7c5-5f79-4ebe-826d-cba2084e2464
+Packages:
+  - Version: 0.8
+    RequiredApiVersion: 6.15.0
+    ReleaseDate: 2026-10-26
+    PackageUrl: https://github.com/zxc34731116797/playnite-galgame-metadata/releases/download/v0.8/YmgalMetadata_2460c7c5-5f79-4ebe-826d-cba2084e2464.pext
+    Changelog:
+      - 'v0.8：Ymgal 标签只保留 STAFF 署名的人名'

@@ -111,7 +111,7 @@ Without a token that source explains what to do instead of failing silently; the
 | Description (Chinese) | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Developers | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Publishers | ✅ | ✅ | ✅ | ❌ | ✅ |
-| Tags | ❌ | ✅ | ✅ | ✅ | ✅ |
+| Tags | ✅ (staff credits, names only) | ✅ | ✅ | ✅ | ✅ |
 | Score | ❌ | ✅ (aggregated) | ❌ (no aggregate) | ❌ | ✅ |
 | Cover | ✅ | ✅ | ✅ | ✅ (R18 covers need "Include adult works") | ✅ |
 | Background / screenshots | ❌ | ✅ banner + full CG set (~25) | ✅ screenshots | ✅ screenshots | ✅ banner |
@@ -123,7 +123,7 @@ Every site's tag list has noise removed (`Galgame`, `PC`, `ADV`, `R18`, `汉化`
 
 ## Known limitations
 
-- **Ymgal**: no tags, no community score and no screenshots/backgrounds, only a main cover; the publisher comes from the site's publisher entries and is empty for some works.
+- **Ymgal**: tags are the names credited in the site's STAFF card (script, art, character design, music, songs) - names only, without the job prefix; the site itself has no work tags, no community score and no screenshots/backgrounds, only a main cover; the publisher comes from the site's publisher entries and is empty for some works.
 - **Kungal**: search requires "Include adult (R18) works", otherwise the site filters R18 works out; tags occasionally contain a company's Chinese name or translation.
 - **Hikarinagi**: no aggregate score, so the community score field stays empty; the age rating is inferred from cover flags and R18 tags and may be wrong for a few works.
 - **Shionlib**: no publishers and no score; as a guest the R18 cover is blurred, so enable "Include adult works" to get the original.

@@ -1,0 +1,23 @@
+AddonId: ShionlibMetadata_e882fba8-217a-4fcd-a400-b53b3392a734
+Type: MetadataProvider
+Name: Shionlib Metadata Provider
+Author: galgame-metadata
+ShortDescription: 从 Shionlib 书音的图书馆抓取元数据：名称、简介、开发商、标签、封面与截图。
+InstallerManifestUrl: https://raw.githubusercontent.com/zxc34731116797/playnite-galgame-metadata/main/manifests/ShionlibMetadata.yaml
+SourceUrl: https://github.com/zxc34731116797/playnite-galgame-metadata
+Description: |-
+  为 Playnite 添加资料数据来源「Shionlib Metadata Provider」，可在「下载元数据」里作为独立来源勾选。
+  - 支持按名称自动匹配，或在游戏链接中放入 https://shionlib.com/zh/game/<ID> 精确匹配
+  - 可刮削名称、多语言简介、开发商、标签、封面与背景图，并自动生成 VNDB / Bangumi / Hikarinagi 交叉链接
+  - 自动过滤无意义标签（如 PC、ADV、R18 等）
+  - 中文界面
+  更多说明见项目主页 README。
+Tags: ["Metadata", "Galgame", "Visual Novel", "Shionlib"]
+Links:
+    GitHub: https://github.com/zxc34731116797/playnite-galgame-metadata
+    Data source: https://shionlib.com/
+Screenshots:
+  - Thumbnail: https://raw.githubusercontent.com/zxc34731116797/playnite-galgame-metadata/main/docs/picker-dark-kungal.png
+    Image: https://raw.githubusercontent.com/zxc34731116797/playnite-galgame-metadata/main/docs/picker-dark-kungal.png
+  - Thumbnail: https://raw.githubusercontent.com/zxc34731116797/playnite-galgame-metadata/main/docs/picker-dark-hikarinagi.png
+    Image: https://raw.githubusercontent.com/zxc34731116797/playnite-galgame-metadata/main/docs/picker-dark-hikarinagi.png
