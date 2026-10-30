@@ -1,11 +1,11 @@
-# Creates the v0.9 GitHub Release for the playnite-galgame-metadata repo and uploads the .pext assets.
+﻿# Creates the v0.9 GitHub Release for the playnite-galgame-metadata repo and uploads the .pext assets.
 # Usage:
 #   powershell -ExecutionPolicy Bypass -File .\tools\make-release.ps1 -Token ghp_xxx
 # Optional:
 #   -Tag v0.9   -NotesFile docs\release-notes-v0.9.md
 param(
     [string]$Token = $env:GH_TOKEN,
-    [string]$Owner = 'zxc34731116797',
+    [string]$Owner = 'ListenToAether',
     [string]$Repo = 'playnite-galgame-metadata',
     [string]$Tag = 'v0.9',
     [string]$Title = 'v0.9 — 图片处理完善，AVIF 不再显示空白框',

@@ -30,7 +30,7 @@
    installer manifest 里写死的下载地址是：
 
    ```
-   https://github.com/zxc34731116797/playnite-galgame-metadata/releases/download/v0.9/<AddonId>.pext
+   https://github.com/ListenToAether/playnite-galgame-metadata/releases/download/v0.9/<AddonId>.pext
    ```
 
    目前仓库里的 Release 是「整仓库源码 zip」，路径对不上，需要替换。

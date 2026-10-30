@@ -3,6 +3,6 @@ Packages:
   - Version: 0.9
     RequiredApiVersion: 6.15.0
     ReleaseDate: 2026-10-26
-    PackageUrl: https://github.com/zxc34731116797/playnite-galgame-metadata/releases/download/v0.9/YmgalMetadata_2460c7c5-5f79-4ebe-826d-cba2084e2464.pext
+    PackageUrl: https://github.com/ListenToAether/playnite-galgame-metadata/releases/download/v0.9/YmgalMetadata_2460c7c5-5f79-4ebe-826d-cba2084e2464.pext
     Changelog:
       - 'v0.9：TouchGAL 图片与版本更新，修正无法解码的图片不再显示空白框'

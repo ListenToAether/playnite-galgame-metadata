@@ -3,8 +3,8 @@ Type: MetadataProvider
 Name: Hikarinagi Metadata Provider
 Author: galgame-metadata
 ShortDescription: 从 Hikarinagi 抓取元数据：名称、简介、开发商、发行商、平台、引擎、标签、封面与截图。
-InstallerManifestUrl: https://raw.githubusercontent.com/zxc34731116797/playnite-galgame-metadata/main/manifests/HikarinagiMetadata.yaml
-SourceUrl: https://github.com/zxc34731116797/playnite-galgame-metadata
+InstallerManifestUrl: https://raw.githubusercontent.com/ListenToAether/playnite-galgame-metadata/main/manifests/HikarinagiMetadata.yaml
+SourceUrl: https://github.com/ListenToAether/playnite-galgame-metadata
 Description: |-
   为 Playnite 添加资料数据来源「Hikarinagi Metadata Provider」，可在「下载元数据」里作为独立来源勾选。
   - 支持按名称自动匹配，或在游戏链接中放入 https://www.hikarinagi.org/galgames/<ID> 精确匹配
@@ -14,10 +14,10 @@ Description: |-
   更多说明见项目主页 README。
 Tags: ["Metadata", "Galgame", "Visual Novel", "Hikarinagi"]
 Links:
-    GitHub: https://github.com/zxc34731116797/playnite-galgame-metadata
+    GitHub: https://github.com/ListenToAether/playnite-galgame-metadata
     Data source: https://www.hikarinagi.org/
 Screenshots:
-  - Thumbnail: https://raw.githubusercontent.com/zxc34731116797/playnite-galgame-metadata/main/docs/picker-dark-kungal.png
-    Image: https://raw.githubusercontent.com/zxc34731116797/playnite-galgame-metadata/main/docs/picker-dark-kungal.png
-  - Thumbnail: https://raw.githubusercontent.com/zxc34731116797/playnite-galgame-metadata/main/docs/picker-dark-hikarinagi.png
-    Image: https://raw.githubusercontent.com/zxc34731116797/playnite-galgame-metadata/main/docs/picker-dark-hikarinagi.png
+  - Thumbnail: https://raw.githubusercontent.com/ListenToAether/playnite-galgame-metadata/main/docs/picker-dark-kungal.png
+    Image: https://raw.githubusercontent.com/ListenToAether/playnite-galgame-metadata/main/docs/picker-dark-kungal.png
+  - Thumbnail: https://raw.githubusercontent.com/ListenToAether/playnite-galgame-metadata/main/docs/picker-dark-hikarinagi.png
+    Image: https://raw.githubusercontent.com/ListenToAether/playnite-galgame-metadata/main/docs/picker-dark-hikarinagi.png

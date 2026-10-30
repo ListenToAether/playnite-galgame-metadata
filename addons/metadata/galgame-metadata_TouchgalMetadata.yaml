@@ -3,8 +3,8 @@ Type: MetadataProvider
 Name: TouchGAL Metadata Provider
 Author: galgame-metadata
 ShortDescription: 从 TouchGAL 抓取元数据：名称、别名、简介、开发商、评分、标签、封面与背景图（需自备 API Token）。
-InstallerManifestUrl: https://raw.githubusercontent.com/zxc34731116797/playnite-galgame-metadata/main/manifests/TouchgalMetadata.yaml
-SourceUrl: https://github.com/zxc34731116797/playnite-galgame-metadata
+InstallerManifestUrl: https://raw.githubusercontent.com/ListenToAether/playnite-galgame-metadata/main/manifests/TouchgalMetadata.yaml
+SourceUrl: https://github.com/ListenToAether/playnite-galgame-metadata
 Description: |-
   为 Playnite 添加资料数据来源「TouchGAL Metadata Provider」，可在「下载元数据」里作为独立来源勾选。
   - 使用 TouchGAL 官方开发者 API，需要你在 https://developer.touchgal.com 申请一个 Token 并填进插件设置
@@ -14,10 +14,10 @@ Description: |-
   更多说明见项目主页 README。
 Tags: ["Metadata", "Galgame", "Visual Novel", "Chinese", "TouchGAL"]
 Links:
-    GitHub: https://github.com/zxc34731116797/playnite-galgame-metadata
+    GitHub: https://github.com/ListenToAether/playnite-galgame-metadata
     Data source: https://www.touchgal.com/
 Screenshots:
-  - Thumbnail: https://raw.githubusercontent.com/zxc34731116797/playnite-galgame-metadata/main/docs/picker-dark-kungal.png
-    Image: https://raw.githubusercontent.com/zxc34731116797/playnite-galgame-metadata/main/docs/picker-dark-kungal.png
-  - Thumbnail: https://raw.githubusercontent.com/zxc34731116797/playnite-galgame-metadata/main/docs/picker-dark-hikarinagi.png
-    Image: https://raw.githubusercontent.com/zxc34731116797/playnite-galgame-metadata/main/docs/picker-dark-hikarinagi.png
+  - Thumbnail: https://raw.githubusercontent.com/ListenToAether/playnite-galgame-metadata/main/docs/picker-dark-kungal.png
+    Image: https://raw.githubusercontent.com/ListenToAether/playnite-galgame-metadata/main/docs/picker-dark-kungal.png
+  - Thumbnail: https://raw.githubusercontent.com/ListenToAether/playnite-galgame-metadata/main/docs/picker-dark-hikarinagi.png
+    Image: https://raw.githubusercontent.com/ListenToAether/playnite-galgame-metadata/main/docs/picker-dark-hikarinagi.png

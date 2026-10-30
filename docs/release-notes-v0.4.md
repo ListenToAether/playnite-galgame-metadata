@@ -21,4 +21,4 @@
 
 > TouchGAL 需要自备 API 令牌：在插件设置里填入 [developer.touchgal.com](https://developer.touchgal.com) 创建的 token，其余四个站点开箱即用。
 
-完整说明见仓库内的 [README](https://github.com/zxc34731116797/playnite-galgame-metadata/blob/main/README.md)。
+完整说明见仓库内的 [README](https://github.com/ListenToAether/playnite-galgame-metadata/blob/main/README.md)。
