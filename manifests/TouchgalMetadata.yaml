@@ -2,7 +2,7 @@ AddonId: TouchgalMetadata_af145bc3-1883-4933-a1d7-d5124de2cccd
 Packages:
   - Version: 0.9
     RequiredApiVersion: 6.15.0
-    ReleaseDate: 2026-10-26
+    ReleaseDate: 2026-10-30
     PackageUrl: https://github.com/ListenToAether/playnite-galgame-metadata/releases/download/v0.9/TouchgalMetadata_af145bc3-1883-4933-a1d7-d5124de2cccd.pext
     Changelog:
       - 'v0.9：TouchGAL 图片与版本更新，修正无法解码的图片不再显示空白框'

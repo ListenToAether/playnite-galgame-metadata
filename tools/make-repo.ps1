@@ -19,7 +19,7 @@ Copy-Item (Join-Path $root '.gitignore') $stage -Force
 
 $tools = Join-Path $stage 'tools'
 New-Item -ItemType Directory -Path $tools -Force | Out-Null
-foreach ($name in @('build.ps1', 'install.ps1', 'install-and-restart.cmd', 'pack.ps1', 'build-harness.ps1', 'build-probe.ps1', 'build-ui.ps1', 'test-settings-view.ps1', 'Harness.cs', 'Probe.cs', 'UiSmoke.cs', 'make-repo.ps1', 'make-release.ps1', 'make-icons.ps1')) {
+foreach ($name in @('build.ps1', 'install.ps1', 'install-and-restart.cmd', 'pack.ps1', 'build-harness.ps1', 'build-probe.ps1', 'build-ui.ps1', 'test-settings-view.ps1', 'Harness.cs', 'Probe.cs', 'UiSmoke.cs', 'make-repo.ps1', 'make-release.ps1', 'make-icons.ps1', 'upload-repo.ps1', 'clean-repo.ps1')) {
     $source = Join-Path $root ('tools\' + $name)
     if (Test-Path $source) { Copy-Item $source $tools -Force }
 }

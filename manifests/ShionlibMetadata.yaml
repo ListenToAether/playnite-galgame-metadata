@@ -2,7 +2,7 @@ AddonId: ShionlibMetadata_e882fba8-217a-4fcd-a400-b53b3392a734
 Packages:
   - Version: 0.9
     RequiredApiVersion: 6.15.0
-    ReleaseDate: 2026-10-26
+    ReleaseDate: 2026-10-30
     PackageUrl: https://github.com/ListenToAether/playnite-galgame-metadata/releases/download/v0.9/ShionlibMetadata_e882fba8-217a-4fcd-a400-b53b3392a734.pext
     Changelog:
       - 'v0.9：TouchGAL 图片与版本更新，修正无法解码的图片不再显示空白框'
