@@ -131,8 +131,9 @@ namespace GalgameMetadata.Touchgal
                 OriginalName = J.FirstStr(data, "aliases.0"),
                 ChineseName = title,
                 Description = Text.CleanBlock(J.Str(data, "introduction")),
-                CoverUrl = Text.FirstNonEmpty(J.Str(data, "coverUrl"), J.Str(data, "bannerUrl")),
-                BannerUrl = J.Str(data, "bannerUrl")
+                // The API only ships one image and it is a portrait cover (e.g. 771x1080 AVIF),
+                // so use it as the cover and leave the background empty instead of stretching it.
+                CoverUrl = Text.FirstNonEmpty(J.Str(data, "coverUrl"), J.Str(data, "bannerUrl"))
             };
 
             int? year, month, day;

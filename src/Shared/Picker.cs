@@ -260,7 +260,8 @@ namespace GalgameMetadata.Playnite
             VerticalAlignment = VerticalAlignment.Center,
             Style = Theme.DarkCheckBox
         };
-        private readonly Dictionary<string, BitmapImage> _imageCache = new Dictionary<string, BitmapImage>();
+        private readonly Dictionary<string, BitmapSource> _imageCache = new Dictionary<string, BitmapSource>();
+        private bool _formatWarningShown;
 
         private string _selectedBackground;
         private Border _selectedBorder;
@@ -639,7 +640,7 @@ namespace GalgameMetadata.Playnite
 
         private void LoadImage(Image target, string url)
         {
-            BitmapImage cached;
+            BitmapSource cached;
             if (_imageCache.TryGetValue(url, out cached))
             {
                 target.Source = cached;
@@ -652,8 +653,16 @@ namespace GalgameMetadata.Playnite
                 {
                     var bytes = Images.TryDownload(url, _source.HomeUrl, _cancel).GetAwaiter().GetResult();
                     if (bytes == null || bytes.Length == 0) return;
+                    // Normalise to PNG first: WIC's AVIF decoder cannot cache, and
+                    // Playnite/other controls only render the classic formats.
+                    var png = ImageUtil.ToPng(bytes);
+                    if (png == null)
+                    {
+                        Dispatcher.BeginInvoke(new Action(ShowImageFormatWarning));
+                        return;
+                    }
                     var bitmap = new BitmapImage();
-                    using (var stream = new MemoryStream(bytes))
+                    using (var stream = new MemoryStream(png))
                     {
                         bitmap.BeginInit();
                         bitmap.CacheOption = BitmapCacheOption.OnLoad;
@@ -672,6 +681,15 @@ namespace GalgameMetadata.Playnite
                     // A missing thumbnail is not worth interrupting the user.
                 }
             });
+        }
+
+        private void ShowImageFormatWarning()
+        {
+            if (_formatWarningShown) return;
+            _formatWarningShown = true;
+            _status.Text = L.T(
+                "该站点的图片是 AVIF 格式，当前 Windows 缺少 AV1 解码器（Microsoft Store 的「AV1 视频扩展」），所以这里无法预览，下载后 Playnite 里也显示不出来。",
+                "This site serves AVIF images and Windows is missing the AV1 decoder (the \"AV1 Video Extension\" from the Microsoft Store), so they cannot be previewed here and will not render in Playnite either.");
         }
 
         private void Confirm()

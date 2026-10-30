@@ -13,7 +13,7 @@
 | TouchGAL Metadata Provider | https://www.touchgal.ink/ | `TouchgalMetadata_af145bc3-1883-4933-a1d7-d5124de2cccd` | 同名文件夹 | `TouchgalMetadata.dll` |
 
 - 目标框架：.NET Framework 4.6.2（与 Playnite 10.51 一致），不依赖任何第三方 DLL，5 个插件各自独立、可单独启用/停用。
-- 当前版本：已在 Playnite 10.51.0.23209 上实测：5 个插件同时加载无报错，四个免 Token 的站点刮削正常，TouchGAL 需自备 API 令牌。图标取自各站点自己的网站图标；设置界面与「手动选择」窗口为暗色主题，**支持中文 / English 切换**。
+- 当前版本 **v0.6**。已在 Playnite 10.51.0.23209 上实测：5 个插件同时加载无报错，四个免 Token 的站点刮削正常，TouchGAL 需自备 API 令牌。图标取自各站点自己的网站图标；设置界面与「手动选择」窗口为暗色主题，**支持中文 / English 切换**。
 
 ## 安装
 
@@ -102,6 +102,8 @@ TouchGAL 的网页/网页 API 受 Cloudflare 挑战保护，普通 HTTP 请求�
 2. 在 Playnite：**设置 → 扩展 → TouchGAL Metadata Provider → 设置**，把 Token 粘贴到「TouchGAL API 令牌」输入框，保存。
 
 没有 Token 时，该来源会提示这段说明而不会静默失败；其他 4 个来源完全不需要账号。
+
+**TouchGAL 无截图、无 PV**：官方接口对每个游戏只返回一张 AVIF 竖版封面（771×1080），插件把它用作封面、背景留空；网站上的「游戏截图」与「PV鉴赏」位于 Cloudflare 保护的接口之后，插件无法获取。这张封面是 AVIF 格式，Windows 需要安装免费的「AV1 视频扩展」（Microsoft Store）才能显示；没有该扩展时插件会跳过这张图，而不是显示空白框。
 
 ## 各站字段覆盖情况
 

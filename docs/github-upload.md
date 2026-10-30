@@ -56,13 +56,13 @@ Playnite 元数据来源插件：Ymgal / Kungal / Hikarinagi / Shionlib / TouchG
 playnite  playnite-extension  playnite-plugin  metadata-provider  galgame  visual-novel  ymgal  kungal  hikarinagi  shionlib  touchgal  csharp
 ```
 
-## 五、发布 v0.8 Release（推荐）
+## 五、发布 v0.9 Release（推荐）
 
 Releases 里的 .pext 让别人能直接下载安装，也方便你填 TouchGAL 的申请表单。
 
 1. 仓库右侧 **Releases** → **Create a new release**
-2. **Choose a tag** 填 `v0.8` → 点 `Create new tag: v0.8 on publish`
-3. **Release title** 填：`v0.8 — 完善手动选择、描述渲染与窗口样式`
+2. **Choose a tag** 填 `v0.9` → 点 `Create new tag: v0.9 on publish`
+3. **Release title** 填：`v0.9 — 图片处理完善，AVIF 不再显示空白框`
 4. **Describe this release** 粘贴：
 
 ```markdown

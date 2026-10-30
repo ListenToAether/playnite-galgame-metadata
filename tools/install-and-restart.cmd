@@ -1,6 +1,6 @@
 @echo off
 setlocal
-title Install Galgame metadata plugins v0.8
+title Install Galgame metadata plugins v0.9
 echo.
 echo  This will close Playnite, install the 5 metadata providers, then start Playnite again.
 echo  Close any game you are playing BEFORE running this.
@@ -15,7 +15,7 @@ if errorlevel 1 goto fail
 echo Starting Playnite...
 start "" "D:\playnite\Playnite.DesktopApp.exe"
 echo.
-echo Done. The plugins were updated to v0.8.
+echo Done. The plugins were updated to v0.9.
 pause
 exit /b 0
 :fail

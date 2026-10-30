@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Playnite.SDK;
 using Playnite.SDK.Models;
 using Playnite.SDK.Plugins;
@@ -495,8 +496,38 @@ namespace GalgameMetadata.Playnite
             }
 
             var fileName = UrlUtil.FileNameFromUrl(url);
-            if (bytes != null && bytes.Length > 0) return new MetadataFile(fileName, bytes, url);
+            if (bytes != null && bytes.Length > 0)
+            {
+                // Playnite cannot decode newer formats like AVIF (TouchGAL uses .avif banners),
+                // so normalise everything to PNG before handing it over.
+                var png = ImageUtil.ToPng(bytes);
+                if (png != null && png.Length > 0)
+                {
+                    var pngName = string.IsNullOrEmpty(fileName) ? "image.png" : Path.ChangeExtension(fileName, ".png");
+                    return new MetadataFile(pngName, png, url);
+                }
+
+                if (IsKnownImage(bytes)) return new MetadataFile(fileName, bytes, url);
+
+                // Undecodable format (AVIF/WebP without the OS codec): handing the raw
+                // bytes to Playnite only produces an empty frame, so skip the image.
+                if (_log != null)
+                {
+                    _log.Warn(string.Format("Skipping image in an unsupported format: {0}", url));
+                }
+                return null;
+            }
             return new MetadataFile(url);
+        }
+
+        private static bool IsKnownImage(byte[] data)
+        {
+            if (data == null || data.Length < 4) return false;
+            if (data[0] == 0x89 && data[1] == 0x50 && data[2] == 0x4E && data[3] == 0x47) return true; // PNG
+            if (data[0] == 0xFF && data[1] == 0xD8) return true; // JPEG
+            if (data[0] == 0x47 && data[1] == 0x49 && data[2] == 0x46) return true; // GIF
+            if (data[0] == 0x42 && data[1] == 0x4D) return true; // BMP
+            return false;
         }
 
         public override string GetName(GetMetadataFieldArgs args)
@@ -618,6 +649,49 @@ namespace GalgameMetadata.Playnite
             _game = null;
             _error = null;
             base.Dispose();
+        }
+    }
+
+    /// <summary>
+    /// Image helpers shared by the picker window and the metadata provider.
+    /// Uses WIC so that formats like AVIF (TouchGAL banners) can be decoded on
+    /// machines that have the HEIF/AVIF codec installed, and re-encodes them to
+    /// PNG because Playnite itself only understands the classic formats.
+    /// </summary>
+    internal static class ImageUtil
+    {
+        /// <summary>
+        /// Converts arbitrary image bytes (including AVIF) to PNG bytes, or returns
+        /// null when the data cannot be decoded. Everything happens while the source
+        /// stream is open because the WIC AVIF decoder does not support cached decoding.
+        /// </summary>
+        public static byte[] ToPng(byte[] data)
+        {
+            if (data == null || data.Length == 0) return null;
+            try
+            {
+                using (var stream = new MemoryStream(data))
+                {
+                    var frame = BitmapFrame.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.Default);
+                    BitmapSource converted = frame;
+                    if (frame.Format != PixelFormats.Bgra32 && frame.Format != PixelFormats.Pbgra32)
+                    {
+                        converted = new FormatConvertedBitmap(frame, PixelFormats.Bgra32, null, 0);
+                    }
+
+                    var encoder = new PngBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create(converted));
+                    using (var output = new MemoryStream())
+                    {
+                        encoder.Save(output);
+                        return output.ToArray();
+                    }
+                }
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }
