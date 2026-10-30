@@ -1,4 +1,4 @@
-# Creates the v0.10 GitHub Release for the playnite-galgame-metadata repo and uploads the .pext assets.
+﻿# Creates the v0.10 GitHub Release for the playnite-galgame-metadata repo and uploads the .pext assets.
 # Usage:
 #   powershell -ExecutionPolicy Bypass -File .\tools\make-release.ps1 -Token ghp_xxx
 # Optional:

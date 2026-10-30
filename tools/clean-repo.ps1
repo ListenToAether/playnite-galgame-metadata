@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$Token = $env:GH_TOKEN,
     [string]$Owner = 'ListenToAether',
     [string]$Repo  = 'playnite-galgame-metadata',
