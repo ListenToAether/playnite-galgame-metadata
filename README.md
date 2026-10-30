@@ -13,7 +13,7 @@
 | TouchGAL Metadata Provider | https://www.touchgal.ink/ | `TouchgalMetadata_af145bc3-1883-4933-a1d7-d5124de2cccd` | 同名文件夹 | `TouchgalMetadata.dll` |
 
 - 目标框架：.NET Framework 4.6.2（与 Playnite 10.51 一致），不依赖任何第三方 DLL，5 个插件各自独立、可单独启用/停用。
-- 当前版本：已在 Playnite 10.51.0.23209 上实测：5 个插件同时加载无报错，四个免 Token 的站点刮削正常，TouchGAL 需自备 API 令牌。图标取自各站点自己的网站图标；设置界面与「手动选择」窗口为暗色主题，**支持中文 / English 切换**。
+- 当前版本 **v0.6**。已在 Playnite 10.51.0.23209 上实测：5 个插件同时加载无报错，四个免 Token 的站点刮削正常，TouchGAL 需自备 API 令牌。图标取自各站点自己的网站图标；设置界面与「手动选择」窗口为暗色主题，**支持中文 / English 切换**。
 
 ## 安装
 
@@ -121,12 +121,11 @@ TouchGAL 的网页/网页 API 受 Cloudflare 挑战保护，普通 HTTP 请求�
 | 平台 | ✅（releases） | ✅ | ✅ | ✅ | ✅ |
 | 额外链接 | 官网/Steam 等 | VNDB/Bangumi/Steam/DLsite/EGS 等 | 官网/Steam/VNDB/Bangumi 等 | VNDB/Bangumi/Hikarinagi + 官网商店 | 官网 |
 
-所有站点的「标签」都会过滤掉无意义标签（`Galgame`、`PC`、`ADV`、`R18`、`汉化`、纯年份、厂商名、职员/声优名等），链接最多保留 12 条并按「本站 → VNDB → Bangumi → Steam → 官网 → 商店」排序去重。
 
 ## 已知限制
 
 - **Ymgal**：标签取自站点「STAFF」卡片里脚本、原画、人物设计、音乐、歌曲的署名，只保留人名、不带到职位；站点本身没有作品标签、社区评分和截图/背景图，只有一张主封面；发行商取自站点的「发行商」条目，个别作品为空。
-- **Kungal**：搜索必须打开「在搜索结果中包含成人（R18）作品」，否则 R18 作品会被站点过滤掉；标签里偶尔会混入厂商中文名或译名。
+- **Kungal**：搜索必须打开「在搜索结果中包含成人（R18）作品」，否则 R18 作品会被站点过滤掉。
 - **Hikarinagi**：不提供聚合评分，「社区评分」字段留空；年龄分级靠封面标记与 R18 标签推断，个别作品可能不准。
 - **Shionlib**：没有发行商和评分；游客身份拿到的 R18 封面是模糊版，需要在设置里开启「包含成人作品」才会取原图。
 - **TouchGAL**：必须自备 API Token 才能使用；只提供 banner 一张背景图；重装插件后需要在设置里再确认一次 Token。

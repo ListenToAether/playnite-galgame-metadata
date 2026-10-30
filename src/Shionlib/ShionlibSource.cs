@@ -181,21 +181,14 @@ namespace GalgameMetadata.Shionlib
                 if (!game.Developers.Contains(name)) game.Developers.Add(name);
             }
 
-            var brands = new HashSet<string>(game.Developers, StringComparer.OrdinalIgnoreCase);
-            // Shionlib staff entries are writers, artists and voice actors; their names appear as
-            // tags but are dropped here so the Playnite tag list stays useful.
-            foreach (var staff in J.Arr(details, "staffs"))
-            {
-                var staffName = J.Str(staff, "name");
-                if (!string.IsNullOrEmpty(staffName)) brands.Add(staffName);
-            }
 
             var tags = 0;
             foreach (var entry in J.Arr(details, "tags"))
             {
                 if (options.MaxTags > 0 && tags >= options.MaxTags) break;
                 var name = J.Str(entry, "tag.name");
-                if (TagFilter.IsJunk(name, game, brands)) continue;
+                if (string.IsNullOrWhiteSpace(name)) continue;
+                name = name.Trim();
                 if (game.Tags.Contains(name)) continue;
                 game.Tags.Add(name);
                 tags++;
@@ -261,27 +254,26 @@ namespace GalgameMetadata.Shionlib
 
         private void AddLinks(ScrapedGame game, JsonValue header, JsonValue details)
         {
-            const int MaxLinks = 12;
-            game.AddLink("Shionlib", game.SiteUrl, MaxLinks);
+            game.AddLink("Shionlib", game.SiteUrl);
 
             var vndb = J.Str(header, "v_id");
             if (!string.IsNullOrEmpty(vndb))
-                game.AddLink("VNDB", "https://vndb.org/" + vndb.TrimStart('v', 'V'), MaxLinks);
+                game.AddLink("VNDB", "https://vndb.org/" + vndb.TrimStart('v', 'V'));
 
             var bangumi = J.Str(header, "b_id");
             if (!string.IsNullOrEmpty(bangumi))
-                game.AddLink("Bangumi", "https://bgm.tv/subject/" + bangumi, MaxLinks);
+                game.AddLink("Bangumi", "https://bgm.tv/subject/" + bangumi);
 
             var hikarinagi = J.Str(header, "h_id");
             if (!string.IsNullOrEmpty(hikarinagi) && hikarinagi != "0")
-                game.AddLink("Hikarinagi", "https://www.hikarinagi.org/galgames/" + hikarinagi, MaxLinks);
+                game.AddLink("Hikarinagi", "https://www.hikarinagi.org/galgames/" + hikarinagi);
 
             foreach (var link in J.Arr(details, "link"))
             {
                 var url = J.Str(link, "url");
                 if (string.IsNullOrEmpty(url)) continue;
                 var label = Text.FirstNonEmpty(J.Str(link, "label"), J.Str(link, "name"), "Website");
-                game.AddLink(label, url, MaxLinks);
+                game.AddLink(label, url);
             }
         }
 

@@ -32,7 +32,7 @@ namespace GalgameMetadata.Shared
 
         public FetchOptions()
         {
-            MaxTags = 15;
+            MaxTags = 0;
             DownloadCover = true;
             DownloadScreenshots = true;
             IncludeNsfw = true;
@@ -217,6 +217,7 @@ namespace GalgameMetadata.Shared
     /// <summary>
     /// Drops tags that carry no library value: generic platform labels, release years and
     /// the developer / publisher names which Playnite already stores in its own fields.
+    /// Only Ymgal uses this: its tags are staff credits, and brand names among them are noise.
     /// </summary>
     public static class TagFilter
     {

@@ -89,7 +89,7 @@ foreach ($site in $sites)
 Id: $folderName
 Name: $($site.Name)
 Author: galgame-metadata
-Version: 0.9
+Version: 0.10
 Module: $($site.Assembly).dll
 Type: MetadataProvider
 Icon: icon.png

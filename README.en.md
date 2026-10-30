@@ -13,7 +13,7 @@ Five Playnite **metadata provider** plugins that pull data from sites which curr
 | TouchGAL Metadata Provider | https://www.touchgal.ink/ | `TouchgalMetadata_af145bc3-1883-4933-a1d7-d5124de2cccd` | same name | `TouchgalMetadata.dll` |
 
 - Target framework: .NET Framework 4.6.2 (same as Playnite 10.51). No third-party DLLs; each plugin is standalone and can be enabled or disabled on its own.
-- Current version：Tested on Playnite 10.51.0.23209: all five load together without errors, the four sources that need no token scrape fine, TouchGAL needs your own API token. The settings view and the manual selection window are dark-themed and available in **Chinese and English**.
+- Current version **v0.6**. Tested on Playnite 10.51.0.23209: all five load together without errors, the four sources that need no token scrape fine, TouchGAL needs your own API token. The settings view and the manual selection window are dark-themed and available in **Chinese and English**.
 
 ## Installation
 
@@ -121,12 +121,11 @@ Without a token that source explains what to do instead of failing silently; the
 | Platforms | ✅ (releases) | ✅ | ✅ | ✅ | ✅ |
 | Extra links | official site, Steam, … | VNDB/Bangumi/Steam/DLsite/EGS, … | official site/Steam/VNDB/Bangumi, … | VNDB/Bangumi/Hikarinagi + stores | official site |
 
-Every site's tag list has noise removed (`Galgame`, `PC`, `ADV`, `R18`, `汉化`, bare years, company names, staff and voice actor names, …). Links are capped at 12 and deduplicated in the order "this site → VNDB → Bangumi → Steam → official site → stores".
 
 ## Known limitations
 
 - **Ymgal**: tags are the names credited in the site's STAFF card (script, art, character design, music, songs) - names only, without the job prefix; the site itself has no work tags, no community score and no screenshots/backgrounds, only a main cover; the publisher comes from the site's publisher entries and is empty for some works.
-- **Kungal**: search requires "Include adult (R18) works", otherwise the site filters R18 works out; tags occasionally contain a company's Chinese name or translation.
+- **Kungal**: search requires "Include adult (R18) works", otherwise the site filters R18 works out.
 - **Hikarinagi**: no aggregate score, so the community score field stays empty; the age rating is inferred from cover flags and R18 tags and may be wrong for a few works.
 - **Shionlib**: no publishers and no score; as a guest the R18 cover is blurred, so enable "Include adult works" to get the original.
 - **TouchGAL**: requires your own API token; only a single banner is available as background; after reinstalling the plugin you have to confirm the token again.

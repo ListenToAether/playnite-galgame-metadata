@@ -42,7 +42,7 @@ namespace GalgameMetadata.Playnite
             IncludeNsfwResults = true;
             DownloadCover = true;
             DownloadScreenshots = true;
-            MaxTags = 15;
+            MaxTags = 0;
             AcceptBestGuess = false;
             AskManualSelection = true;
         }

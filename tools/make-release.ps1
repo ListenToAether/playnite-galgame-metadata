@@ -1,14 +1,14 @@
-﻿# Creates the v0.9 GitHub Release for the playnite-galgame-metadata repo and uploads the .pext assets.
+# Creates the v0.10 GitHub Release for the playnite-galgame-metadata repo and uploads the .pext assets.
 # Usage:
 #   powershell -ExecutionPolicy Bypass -File .\tools\make-release.ps1 -Token ghp_xxx
 # Optional:
-#   -Tag v0.9   -NotesFile docs\release-notes-v0.9.md
+#   -Tag v0.10   -NotesFile docs\release-notes-v0.10.md
 param(
     [string]$Token = $env:GH_TOKEN,
     [string]$Owner = 'ListenToAether',
     [string]$Repo = 'playnite-galgame-metadata',
-    [string]$Tag = 'v0.9',
-    [string]$Title = 'v0.9 — 图片处理完善，AVIF 不再显示空白框',
+    [string]$Tag = 'v0.10',
+    [string]$Title = 'v0.10 — 标签与链接不再过滤或截断',
     [string]$NotesFile,
     [string]$SpecFile
 )
@@ -18,7 +18,7 @@ if ([string]::IsNullOrWhiteSpace($Token)) { throw 'No token: pass -Token or set 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 $root = Split-Path -Parent $PSScriptRoot
-if (-not $NotesFile) { $NotesFile = Join-Path $root 'docs\release-notes-v0.9.md' }
+if (-not $NotesFile) { $NotesFile = Join-Path $root 'docs\release-notes-v0.10.md' }
 if (-not $SpecFile -or -not (Test-Path $SpecFile)) {
     # The spec is only needed by the harness scripts; release creation does not use it.
     $SpecFile = $null

@@ -68,13 +68,12 @@ namespace GalgameMetadata.Shared
         public List<ScrapedLink> AssociatedSourceLinks { get; set; }
 
         /// <summary>
-        /// Adds a link unless the url is already present. Playnite shows every link on the game
-        /// details view, so the list is capped to keep scraped pages readable.
+        /// Adds a link unless the url is already present. Every link the site offers is kept;
+        /// duplicate urls are dropped so the same page is not listed twice.
         /// </summary>
-        public void AddLink(string name, string url, int max)
+        public void AddLink(string name, string url)
         {
             if (string.IsNullOrEmpty(url)) return;
-            if (Links.Count >= max) return;
             foreach (var existing in Links)
             {
                 if (string.Equals(existing.Url, url, StringComparison.OrdinalIgnoreCase)) return;

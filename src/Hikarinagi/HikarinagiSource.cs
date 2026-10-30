@@ -194,24 +194,13 @@ namespace GalgameMetadata.Hikarinagi
             AddProducers(game, producersTask.Result);
 
             var tags = 0;
-            var developerNames = new HashSet<string>(game.Developers, StringComparer.OrdinalIgnoreCase);
-            // Staff entries are artists, writers and voice actors; their names show up as tags
-            // but are noise in a Playnite tag list, so drop them the same way as brand names.
-            foreach (var entry in staffTask.Result)
-            {
-                var person = J.Get(entry, "person");
-                foreach (var field in new[] { "name", "trans_name" })
-                {
-                    var personName = J.Str(person, field);
-                    if (!string.IsNullOrEmpty(personName)) developerNames.Add(personName);
-                }
-            }
 
             foreach (var entry in tagsTask.Result)
             {
                 if (options.MaxTags > 0 && tags >= options.MaxTags) break;
                 var name = J.Str(entry, "tag.name");
-                if (TagFilter.IsJunk(name, game, developerNames)) continue;
+                if (string.IsNullOrWhiteSpace(name)) continue;
+                name = name.Trim();
                 if (game.Tags.Contains(name)) continue;
                 game.Tags.Add(name);
                 tags++;
@@ -297,34 +286,33 @@ namespace GalgameMetadata.Hikarinagi
 
         private void AddLinks(ScrapedGame game, JsonValue detail)
         {
-            const int MaxLinks = 12;
-            game.AddLink("Hikarinagi", game.SiteUrl, MaxLinks);
+            game.AddLink("Hikarinagi", game.SiteUrl);
 
             var vndb = J.Str(detail, "vndb_id");
             if (!string.IsNullOrEmpty(vndb) && vndb != "0")
-                game.AddLink("VNDB", "https://vndb.org/" + vndb.TrimStart('v', 'V'), MaxLinks);
+                game.AddLink("VNDB", "https://vndb.org/" + vndb.TrimStart('v', 'V'));
 
             var bangumi = J.Str(detail, "bangumi_game_id");
             if (!string.IsNullOrEmpty(bangumi) && bangumi != "0")
-                game.AddLink("Bangumi", "https://bgm.tv/subject/" + bangumi, MaxLinks);
+                game.AddLink("Bangumi", "https://bgm.tv/subject/" + bangumi);
 
             foreach (var app in J.Arr(detail, "steam_apps"))
             {
                 var appId = J.Str(app, "app_id");
                 if (string.IsNullOrEmpty(appId)) continue;
-                game.AddLink("Steam", "https://store.steampowered.com/app/" + appId, MaxLinks);
+                game.AddLink("Steam", "https://store.steampowered.com/app/" + appId);
             }
 
             var homepage = J.Str(detail, "homepage");
             if (!string.IsNullOrEmpty(homepage))
-                game.AddLink("Official website", homepage, MaxLinks);
+                game.AddLink("Official website", homepage);
 
             foreach (var link in J.Arr(detail, "external_links"))
             {
                 var url = J.Str(link, "url");
                 if (string.IsNullOrEmpty(url)) continue;
                 var label = Text.FirstNonEmpty(J.Str(link, "label"), J.Str(link, "name"), "Website");
-                game.AddLink(label, url, MaxLinks);
+                game.AddLink(label, url);
             }
         }
 

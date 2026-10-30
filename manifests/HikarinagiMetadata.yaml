@@ -1,8 +1,8 @@
 AddonId: HikarinagiMetadata_57db3d17-7ad1-4f98-83b3-bcffb08ef8d2
 Packages:
-  - Version: 0.9
+  - Version: 0.10
     RequiredApiVersion: 6.15.0
     ReleaseDate: 2026-10-30
-    PackageUrl: https://github.com/ListenToAether/playnite-galgame-metadata/releases/download/v0.9/HikarinagiMetadata_57db3d17-7ad1-4f98-83b3-bcffb08ef8d2.pext
+    PackageUrl: https://github.com/ListenToAether/playnite-galgame-metadata/releases/download/v0.10/HikarinagiMetadata_57db3d17-7ad1-4f98-83b3-bcffb08ef8d2.pext
     Changelog:
-      - 'v0.9：TouchGAL 图片与版本更新，修正无法解码的图片不再显示空白框'
+      - 'v0.10：标签与链接保留站点全部内容，不再过滤或截断'

@@ -197,7 +197,6 @@ namespace GalgameMetadata.Kungal
 
             AddCompanies(game, work, options);
 
-            var brands = CompanyNames(work);
             var tags = 0;
             foreach (var tag in J.Arr(work, "tags"))
             {
@@ -205,7 +204,8 @@ namespace GalgameMetadata.Kungal
                 if (string.Equals(J.Str(tag, "tier"), "hidden", StringComparison.OrdinalIgnoreCase)) continue;
                 if (J.Bool(tag, "is_sexual") == true && !options.IncludeNsfw) continue;
                 var name = J.Str(tag, "display_name");
-                if (TagFilter.IsJunk(name, game, brands)) continue;
+                if (string.IsNullOrWhiteSpace(name)) continue;
+                name = name.Trim();
                 if (game.Tags.Contains(name)) continue;
                 game.Tags.Add(name);
                 tags++;
@@ -337,21 +337,16 @@ namespace GalgameMetadata.Kungal
 
         private void AddLinks(ScrapedGame game, JsonValue work, string id)
         {
-            game.AddLink("Kungal", PageUrl(id), 12);
+            game.AddLink("Kungal", PageUrl(id));
 
-            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var reference in J.Arr(work, "refs"))
             {
                 var source = J.Str(reference, "source");
                 var externalId = J.Str(reference, "external_id");
                 if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(externalId)) continue;
-                // VNDB refs also list every release (r12345); only the work entry is a useful link.
-                if (string.Equals(source, "vndb", StringComparison.OrdinalIgnoreCase) &&
-                    !externalId.StartsWith("v", StringComparison.OrdinalIgnoreCase)) continue;
-                if (!seen.Add(source)) continue;
                 var url = ExternalUrl(source, externalId);
                 if (string.IsNullOrEmpty(url)) continue;
-                game.AddLink(Label(source), url, 12);
+                game.AddLink(Label(source), url);
                 game.AssociatedSourceLinks.Add(new ScrapedLink(Label(source), url));
             }
         }
