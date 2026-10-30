@@ -13,7 +13,7 @@
 | TouchGAL Metadata Provider | https://www.touchgal.ink/ | `TouchgalMetadata_af145bc3-1883-4933-a1d7-d5124de2cccd` | 同名文件夹 | `TouchgalMetadata.dll` |
 
 - 目标框架：.NET Framework 4.6.2（与 Playnite 10.51 一致），不依赖任何第三方 DLL，5 个插件各自独立、可单独启用/停用。
-- 当前版本：。已在 Playnite 10.51.0.23209 上实测：5 个插件同时加载无报错，四个免 Token 的站点刮削正常，TouchGAL 需自备 API 令牌。图标取自各站点自己的网站图标；设置界面与「手动选择」窗口为暗色主题，**支持中文 / English 切换**。
+- 当前版本：已在 Playnite 10.51.0.23209 上实测：5 个插件同时加载无报错，四个免 Token 的站点刮削正常，TouchGAL 需自备 API 令牌。图标取自各站点自己的网站图标；设置界面与「手动选择」窗口为暗色主题，**支持中文 / English 切换**。
 
 ## 安装
 
