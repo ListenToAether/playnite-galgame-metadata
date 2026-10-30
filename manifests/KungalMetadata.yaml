@@ -5,4 +5,4 @@ Packages:
     ReleaseDate: 2026-10-30
     PackageUrl: https://github.com/ListenToAether/playnite-galgame-metadata/releases/download/v0.10/KungalMetadata_664139ab-88b1-4be5-869e-592b81e21df6.pext
     Changelog:
-      - 'v0.10：标签与链接保留站点全部内容，不再过滤或截断'
+      - 'v0.10：标签不再过滤，按站点原样写入'

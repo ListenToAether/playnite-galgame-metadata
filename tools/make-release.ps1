@@ -1,4 +1,4 @@
-﻿# Creates the v0.10 GitHub Release for the playnite-galgame-metadata repo and uploads the .pext assets.
+﻿﻿# Creates the v0.10 GitHub Release for the playnite-galgame-metadata repo and uploads the .pext assets.
 # Usage:
 #   powershell -ExecutionPolicy Bypass -File .\tools\make-release.ps1 -Token ghp_xxx
 # Optional:
@@ -8,7 +8,7 @@ param(
     [string]$Owner = 'ListenToAether',
     [string]$Repo = 'playnite-galgame-metadata',
     [string]$Tag = 'v0.10',
-    [string]$Title = 'v0.10 — 标签与链接不再过滤或截断',
+    [string]$Title = 'v0.10 — 标签不再过滤',
     [string]$NotesFile,
     [string]$SpecFile
 )
