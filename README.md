@@ -121,6 +121,8 @@ TouchGAL 的网页/网页 API 受 Cloudflare 挑战保护，普通 HTTP 请求�
 | 平台 | ✅（releases） | ✅ | ✅ | ✅ | ✅ |
 | 额外链接 | 官网/Steam 等 | VNDB/Bangumi/Steam/DLsite/EGS 等 | 官网/Steam/VNDB/Bangumi 等 | VNDB/Bangumi/Hikarinagi + 官网商店 | 官网 |
 
+链接最多保留 12 条，按「本站 → VNDB → Bangumi → Steam → 官网 → 商店」的顺序去重。
+
 
 ## 已知限制
 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -286,33 +286,34 @@ namespace GalgameMetadata.Hikarinagi
 
         private void AddLinks(ScrapedGame game, JsonValue detail)
         {
-            game.AddLink("Hikarinagi", game.SiteUrl);
+            const int MaxLinks = 12;
+            game.AddLink("Hikarinagi", game.SiteUrl, MaxLinks);
 
             var vndb = J.Str(detail, "vndb_id");
             if (!string.IsNullOrEmpty(vndb) && vndb != "0")
-                game.AddLink("VNDB", "https://vndb.org/" + vndb.TrimStart('v', 'V'));
+                game.AddLink("VNDB", "https://vndb.org/" + vndb.TrimStart('v', 'V'), MaxLinks);
 
             var bangumi = J.Str(detail, "bangumi_game_id");
             if (!string.IsNullOrEmpty(bangumi) && bangumi != "0")
-                game.AddLink("Bangumi", "https://bgm.tv/subject/" + bangumi);
+                game.AddLink("Bangumi", "https://bgm.tv/subject/" + bangumi, MaxLinks);
 
             foreach (var app in J.Arr(detail, "steam_apps"))
             {
                 var appId = J.Str(app, "app_id");
                 if (string.IsNullOrEmpty(appId)) continue;
-                game.AddLink("Steam", "https://store.steampowered.com/app/" + appId);
+                game.AddLink("Steam", "https://store.steampowered.com/app/" + appId, MaxLinks);
             }
 
             var homepage = J.Str(detail, "homepage");
             if (!string.IsNullOrEmpty(homepage))
-                game.AddLink("Official website", homepage);
+                game.AddLink("Official website", homepage, MaxLinks);
 
             foreach (var link in J.Arr(detail, "external_links"))
             {
                 var url = J.Str(link, "url");
                 if (string.IsNullOrEmpty(url)) continue;
                 var label = Text.FirstNonEmpty(J.Str(link, "label"), J.Str(link, "name"), "Website");
-                game.AddLink(label, url);
+                game.AddLink(label, url, MaxLinks);
             }
         }
 

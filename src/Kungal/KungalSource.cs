@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -337,16 +337,21 @@ namespace GalgameMetadata.Kungal
 
         private void AddLinks(ScrapedGame game, JsonValue work, string id)
         {
-            game.AddLink("Kungal", PageUrl(id));
+            game.AddLink("Kungal", PageUrl(id), 12);
 
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var reference in J.Arr(work, "refs"))
             {
                 var source = J.Str(reference, "source");
                 var externalId = J.Str(reference, "external_id");
                 if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(externalId)) continue;
+                // VNDB refs also list every release (r12345); only the work entry is a useful link.
+                if (string.Equals(source, "vndb", StringComparison.OrdinalIgnoreCase) &&
+                    !externalId.StartsWith("v", StringComparison.OrdinalIgnoreCase)) continue;
+                if (!seen.Add(source)) continue;
                 var url = ExternalUrl(source, externalId);
                 if (string.IsNullOrEmpty(url)) continue;
-                game.AddLink(Label(source), url);
+                game.AddLink(Label(source), url, 12);
                 game.AssociatedSourceLinks.Add(new ScrapedLink(Label(source), url));
             }
         }

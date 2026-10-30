@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -254,26 +254,27 @@ namespace GalgameMetadata.Shionlib
 
         private void AddLinks(ScrapedGame game, JsonValue header, JsonValue details)
         {
-            game.AddLink("Shionlib", game.SiteUrl);
+            const int MaxLinks = 12;
+            game.AddLink("Shionlib", game.SiteUrl, MaxLinks);
 
             var vndb = J.Str(header, "v_id");
             if (!string.IsNullOrEmpty(vndb))
-                game.AddLink("VNDB", "https://vndb.org/" + vndb.TrimStart('v', 'V'));
+                game.AddLink("VNDB", "https://vndb.org/" + vndb.TrimStart('v', 'V'), MaxLinks);
 
             var bangumi = J.Str(header, "b_id");
             if (!string.IsNullOrEmpty(bangumi))
-                game.AddLink("Bangumi", "https://bgm.tv/subject/" + bangumi);
+                game.AddLink("Bangumi", "https://bgm.tv/subject/" + bangumi, MaxLinks);
 
             var hikarinagi = J.Str(header, "h_id");
             if (!string.IsNullOrEmpty(hikarinagi) && hikarinagi != "0")
-                game.AddLink("Hikarinagi", "https://www.hikarinagi.org/galgames/" + hikarinagi);
+                game.AddLink("Hikarinagi", "https://www.hikarinagi.org/galgames/" + hikarinagi, MaxLinks);
 
             foreach (var link in J.Arr(details, "link"))
             {
                 var url = J.Str(link, "url");
                 if (string.IsNullOrEmpty(url)) continue;
                 var label = Text.FirstNonEmpty(J.Str(link, "label"), J.Str(link, "name"), "Website");
-                game.AddLink(label, url);
+                game.AddLink(label, url, MaxLinks);
             }
         }
 

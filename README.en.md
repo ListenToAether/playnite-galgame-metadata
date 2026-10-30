@@ -121,6 +121,8 @@ Without a token that source explains what to do instead of failing silently; the
 | Platforms | ✅ (releases) | ✅ | ✅ | ✅ | ✅ |
 | Extra links | official site, Steam, … | VNDB/Bangumi/Steam/DLsite/EGS, … | official site/Steam/VNDB/Bangumi, … | VNDB/Bangumi/Hikarinagi + stores | official site |
 
+Links are capped at 12 and deduplicated in the order "this site → VNDB → Bangumi → Steam → official site → stores".
+
 
 ## Known limitations
 
